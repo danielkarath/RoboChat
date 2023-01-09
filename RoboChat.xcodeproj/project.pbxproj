@@ -13,6 +13,10 @@
 		39C52F74296C30B700D91F12 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 39C52F72296C30B700D91F12 /* Main.storyboard */; };
 		39C52F76296C30B700D91F12 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 39C52F75296C30B700D91F12 /* Assets.xcassets */; };
 		39C52F79296C30B700D91F12 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 39C52F77296C30B700D91F12 /* LaunchScreen.storyboard */; };
+		39C52F82296C314500D91F12 /* OpenAISwift in Frameworks */ = {isa = PBXBuildFile; productRef = 39C52F81296C314500D91F12 /* OpenAISwift */; };
+		39C52F84296C326200D91F12 /* APIManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 39C52F83296C326200D91F12 /* APIManager.swift */; };
+		39C52F86296C90D700D91F12 /* extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 39C52F85296C90D700D91F12 /* extensions.swift */; };
+		39C52F88296C9B5900D91F12 /* HapticsManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 39C52F87296C9B5900D91F12 /* HapticsManager.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -24,6 +28,9 @@
 		39C52F75296C30B700D91F12 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		39C52F78296C30B700D91F12 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		39C52F7A296C30B700D91F12 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		39C52F83296C326200D91F12 /* APIManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = APIManager.swift; sourceTree = "<group>"; };
+		39C52F85296C90D700D91F12 /* extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = extensions.swift; sourceTree = "<group>"; };
+		39C52F87296C9B5900D91F12 /* HapticsManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HapticsManager.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -31,6 +38,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				39C52F82296C314500D91F12 /* OpenAISwift in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -57,12 +65,15 @@
 			isa = PBXGroup;
 			children = (
 				39C52F6C296C30B700D91F12 /* AppDelegate.swift */,
+				39C52F83296C326200D91F12 /* APIManager.swift */,
 				39C52F6E296C30B700D91F12 /* SceneDelegate.swift */,
 				39C52F70296C30B700D91F12 /* ViewController.swift */,
+				39C52F85296C90D700D91F12 /* extensions.swift */,
 				39C52F72296C30B700D91F12 /* Main.storyboard */,
 				39C52F75296C30B700D91F12 /* Assets.xcassets */,
 				39C52F77296C30B700D91F12 /* LaunchScreen.storyboard */,
 				39C52F7A296C30B700D91F12 /* Info.plist */,
+				39C52F87296C9B5900D91F12 /* HapticsManager.swift */,
 			);
 			path = RoboChat;
 			sourceTree = "<group>";
@@ -83,6 +94,9 @@
 			dependencies = (
 			);
 			name = RoboChat;
+			packageProductDependencies = (
+				39C52F81296C314500D91F12 /* OpenAISwift */,
+			);
 			productName = RoboChat;
 			productReference = 39C52F69296C30B700D91F12 /* RoboChat.app */;
 			productType = "com.apple.product-type.application";
@@ -111,6 +125,9 @@
 				Base,
 			);
 			mainGroup = 39C52F60296C30B700D91F12;
+			packageReferences = (
+				39C52F80296C314500D91F12 /* XCRemoteSwiftPackageReference "OpenAISwift" */,
+			);
 			productRefGroup = 39C52F6A296C30B700D91F12 /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
@@ -138,6 +155,9 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				39C52F88296C9B5900D91F12 /* HapticsManager.swift in Sources */,
+				39C52F86296C90D700D91F12 /* extensions.swift in Sources */,
+				39C52F84296C326200D91F12 /* APIManager.swift in Sources */,
 				39C52F71296C30B700D91F12 /* ViewController.swift in Sources */,
 				39C52F6D296C30B700D91F12 /* AppDelegate.swift in Sources */,
 				39C52F6F296C30B700D91F12 /* SceneDelegate.swift in Sources */,
@@ -290,11 +310,15 @@
 				DEVELOPMENT_TEAM = L25LXZY6LR;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = RoboChat/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = RoboChat;
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.utilities";
+				INFOPLIST_KEY_NSMicrophoneUsageDescription = "Please authorize RoboChat to access the microphone to ask questions with speech.";
+				INFOPLIST_KEY_NSSpeechRecognitionUsageDescription = "Please authorize speech recognition to ask questions with speech.";
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
 				INFOPLIST_KEY_UIMainStoryboardFile = Main;
-				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
-				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations = UIInterfaceOrientationPortrait;
+				IPHONEOS_DEPLOYMENT_TARGET = 16.2;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -302,9 +326,12 @@
 				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.danielkarath.RoboChat;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				SUPPORTS_MACCATALYST = NO;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = YES;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
+				TARGETED_DEVICE_FAMILY = 1;
 			};
 			name = Debug;
 		};
@@ -318,11 +345,15 @@
 				DEVELOPMENT_TEAM = L25LXZY6LR;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = RoboChat/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = RoboChat;
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.utilities";
+				INFOPLIST_KEY_NSMicrophoneUsageDescription = "Please authorize RoboChat to access the microphone to ask questions with speech.";
+				INFOPLIST_KEY_NSSpeechRecognitionUsageDescription = "Please authorize speech recognition to ask questions with speech.";
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
 				INFOPLIST_KEY_UIMainStoryboardFile = Main;
-				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
-				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations = UIInterfaceOrientationPortrait;
+				IPHONEOS_DEPLOYMENT_TARGET = 16.2;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -330,9 +361,12 @@
 				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.danielkarath.RoboChat;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				SUPPORTS_MACCATALYST = NO;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = YES;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
+				TARGETED_DEVICE_FAMILY = 1;
 			};
 			name = Release;
 		};
@@ -358,6 +392,25 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		39C52F80296C314500D91F12 /* XCRemoteSwiftPackageReference "OpenAISwift" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/adamrushy/OpenAISwift";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 1.0.0;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		39C52F81296C314500D91F12 /* OpenAISwift */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 39C52F80296C314500D91F12 /* XCRemoteSwiftPackageReference "OpenAISwift" */;
+			productName = OpenAISwift;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = 39C52F61296C30B700D91F12 /* Project object */;
 }
