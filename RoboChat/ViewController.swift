@@ -193,6 +193,7 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
         super.viewDidLoad()
         setupViews()
         setupConstraints()
+        setupDoubleTapRecognizer(view: view)
         // Do any additional setup after loading the view.
     }
     
@@ -314,6 +315,13 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
         }
     }
     
+    private func setupDoubleTapRecognizer(view: UIView) {
+        let doubleTapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(handleDoubleTap))
+        doubleTapGestureRecognizer.numberOfTapsRequired = 2
+        doubleTapGestureRecognizer.numberOfTouchesRequired = 2
+        view.addGestureRecognizer(doubleTapGestureRecognizer)
+    }
+    
     private func sendQuestion(textField: UITextField) {
         if questionAllowed {
             setupSendButton(isEnabled: questionAllowed)
@@ -331,7 +339,7 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
                             self?.textField.text = nil
                             self?.setupSendButton(isEnabled: self?.questionAllowed ?? false)
                             self?.errorLabel.isHidden = true
-                            //self?.say(synthesizer: self!.synthesizer, phrase: modifiedOutput, onlyIfVoiceOverOn: false, isPriority: true)
+                            self?.say(synthesizer: self!.synthesizer, phrase: output, onlyIfVoiceOverOn: false, isPriority: true)
                         }
                     case .failure:
                         print("ERROR: Failed to get response from APIManager.")
@@ -591,6 +599,33 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
         }
     }
     
+    @objc private func handleDoubleTap() {
+        if questionAllowed {
+            if speechRecognitionAuth == .notDetermined {
+                requestAuthorizationRecording()
+            } else if speechRecognitionAuth != .authorized {
+                if let aString = URL(string: UIApplication.openSettingsURLString) {
+                    UIApplication.shared.open(aString, options: [:], completionHandler: { success in
+                        
+                    })
+                }
+            } else {
+                if audioEngine.isRunning {
+                    audioEngine.stop()
+                    animationTimer?.invalidate()
+                    sendQuestion(textField: textField)
+                } else {
+                    do {
+                        try startRecording()
+                    } catch {
+                        print("bad bad bad")
+                    }
+                    startTimerDown()
+                }
+            }
+        }
+    }
+    
     @objc private func microphoneButtonTapped(_ sender: UIButton) {
         if speechRecognitionAuth == .notDetermined {
             requestAuthorizationRecording()
@@ -618,7 +653,7 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
     
     public func say(synthesizer: AVSpeechSynthesizer, phrase: String, onlyIfVoiceOverOn: Bool = true, isPriority: Bool, language: VoiceLanguage = .English, rate: Float = AVSpeechUtteranceDefaultSpeechRate, volume: Float = 1.0) {
         guard AVSpeechSynthesisVoice(language: language.rawValue) != nil else { return }
-        var voice: AVSpeechSynthesisVoice = AVSpeechSynthesisVoice(language: language.rawValue) ?? AVSpeechSynthesisVoice(language: "en-US")!
+        let voice: AVSpeechSynthesisVoice = AVSpeechSynthesisVoice(language: language.rawValue) ?? AVSpeechSynthesisVoice(language: "en-US")!
         if onlyIfVoiceOverOn {
             guard UIAccessibility.isVoiceOverRunning else { return }
             if synthesizer.isSpeaking || UIAccessibility.isVoiceOverRunning {
