@@ -133,7 +133,11 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
         let tableView = UITableView()
         tableView.translatesAutoresizingMaskIntoConstraints = false
         tableView.register(UITableViewCell.self, forCellReuseIdentifier: "cell")
-        tableView.separatorColor = UIColor(red: 212/255, green: 212/255, blue: 216/255, alpha: 1.0)
+        //tableView.separatorColor = UIColor(red: 212/255, green: 212/255, blue: 216/255, alpha: 0.1)
+        tableView.allowsSelection = false
+        tableView.translatesAutoresizingMaskIntoConstraints = false
+        tableView.estimatedRowHeight = 50
+        tableView.rowHeight = UITableView.automaticDimension
         tableView.separatorStyle = .none
         return tableView
     }()
@@ -195,6 +199,7 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
     override func viewDidLoad() {
         super.viewDidLoad()
         setupViews()
+        chatTableView.separatorStyle = .none
         setupConstraints()
         setupDoubleTapRecognizer(view: view)
         // Do any additional setup after loading the view.
@@ -375,20 +380,20 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
     private func modifyOutput(output: String) -> String {
         var modifiedOutput: String = output.trimmingCharacters(in: .newlines)
         var outputChars: [Character] = []
-        
+        print("original output: \(output)")
         modifiedOutput = modifiedOutput.replacingOccurrences(of: "\n", with: " ", options: .literal)
         let modifiedOutputLength: Int = modifiedOutput.count
         var i: Int = 0
-        
+        var j: Int = 0
         while i < modifiedOutputLength-1 && i < 20 {
             let char = modifiedOutput[modifiedOutput.index(modifiedOutput.startIndex, offsetBy: i)]
             outputChars.append(char)
             i = i + 1
         }
         
-        while (outputChars[0] == " " || outputChars[0] == "?" || outputChars[0] == "!") && outputChars.count > 1 {
-            outputChars.dropFirst()
-            print(outputChars.first)
+        while (outputChars[0] == " " || outputChars[0] == "?" || outputChars[0] == "!") && j < 5 {
+            outputChars.remove(at: 0)
+            j = j + 1
         }
         
         print("Complete char array: \(outputChars)")
@@ -591,16 +596,18 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "cell", for: indexPath)
+        cell.layer.frame.size = CGSize(width: UIScreen.main.bounds.size.width, height: 60)
         let counter: Int = indexPath.row
         var imageView = UIImageView(image: UIImage(named: "aiIcon"))
         var label = UILabel()
         
         cell.backgroundColor = simpleBackgroundColor //.red
         
-        label.frame = CGRect(x: 46, y: cell.layer.frame.height/2.5, width: (UIScreen.main.bounds.size.width-80), height: 24)
+        label.frame = CGRect(x: 46, y: 20, width: (UIScreen.main.bounds.size.width-80), height: 30)
+        label.textAlignment = .left
         label.font = UIFont(name: "Avenir Next", size: 15)
         label.textColor = textColor
-        label.numberOfLines = 1
+        label.numberOfLines = 0
         label.text = models[indexPath.row]
         
         if counter % 2 == 0 {
