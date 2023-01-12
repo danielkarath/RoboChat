@@ -12,3 +12,15 @@ extension UIView {
         subviews.forEach { $0.removeFromSuperview() }
     }
 }
+
+extension String {
+    subscript(i: Int) -> String {
+        return  i < count ? String(self[index(startIndex, offsetBy: i)]) : ""
+    }
+}
+
+extension StringProtocol {
+    subscript(offset: Int) -> Character {
+        self[index(startIndex, offsetBy: offset)]
+    }
+}

@@ -22,8 +22,9 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
     private var speechRecognizer: SFSpeechRecognizer?
     private var recognitionRequest: SFSpeechAudioBufferRecognitionRequest?
     private var recognitionTask: SFSpeechRecognitionTask?
-    private let audioEngine = AVAudioEngine()
     private var speechRecognitionAuth: SFSpeechRecognizerAuthorizationStatus?
+    private let audioSession = AVAudioSession.sharedInstance()
+    private var audioEngine = AVAudioEngine()
     
     private var countdownTimer: Timer?
     private var animationTimer: Timer?
@@ -31,6 +32,8 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
     
     private var models = [String]()
     private var questionAllowed: Bool = true
+    private var audioInputBusCounter: Int = 0
+    private var isAudioEngineRunning: Bool = false
     
     // MARK: - Color constants
     private let textColor: UIColor = UIColor(named: "textColor") ?? UIColor(red: 28/255, green: 28/244, blue: 32/255, alpha: 1.0)
@@ -264,7 +267,7 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
             clearTextButton.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 10),
             clearTextButton.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: -16),
             clearTextButton.heightAnchor.constraint(equalToConstant: 32),
-            clearTextButton.widthAnchor.constraint(equalToConstant: 96),
+            clearTextButton.widthAnchor.constraint(equalToConstant: 72),
             
             circleView1.bottomAnchor.constraint(equalTo: lowerView.topAnchor, constant: -26),
             circleView1.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: -26),
@@ -330,15 +333,19 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
                 APIManager.shared.getResponse(input: text) { [weak self] result in
                     switch result {
                     case .success(let output):
-                        var modifiedOutput = output.trimmingCharacters(in: .newlines)
-                        modifiedOutput = modifiedOutput.replacingOccurrences(of: "\n", with: " ", options: .literal)
+                        let modifiedOutput = self?.modifyOutput(output: output) ?? output
                         self?.models.append(modifiedOutput.trimmingCharacters(in: .newlines))
-                        print("Output by AI: \(output)")
                         DispatchQueue.main.async {
                             self?.chatTableView.reloadData()
                             self?.textField.text = nil
                             self?.setupSendButton(isEnabled: self?.questionAllowed ?? false)
                             self?.errorLabel.isHidden = true
+                            do{
+                                let _ = try self?.audioSession.setCategory(AVAudioSession.Category.playback,
+                                                                                        options: .duckOthers)
+                              }catch{
+                                  print(error)
+                              }
                             self?.say(synthesizer: self!.synthesizer, phrase: output, onlyIfVoiceOverOn: false, isPriority: true)
                         }
                     case .failure:
@@ -363,6 +370,29 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
     private func startTimerDown() {
         //startSoundWaveAnimation()
         animationTimer = Timer.scheduledTimer(timeInterval: 3.0, target: self, selector: #selector(startSoundWaveAnimation), userInfo: nil, repeats: true)
+    }
+    
+    private func modifyOutput(output: String) -> String {
+        var modifiedOutput: String = output.trimmingCharacters(in: .newlines)
+        var outputChars: [Character] = []
+        
+        modifiedOutput = modifiedOutput.replacingOccurrences(of: "\n", with: " ", options: .literal)
+        let modifiedOutputLength: Int = modifiedOutput.count
+        var i: Int = 0
+        
+        while i < modifiedOutputLength-1 && i < 20 {
+            let char = modifiedOutput[modifiedOutput.index(modifiedOutput.startIndex, offsetBy: i)]
+            outputChars.append(char)
+            i = i + 1
+        }
+        
+        while (outputChars[0] == " " || outputChars[0] == "?" || outputChars[0] == "!") && outputChars.count > 1 {
+            outputChars.dropFirst()
+            print(outputChars.first)
+        }
+        
+        print("Complete char array: \(outputChars)")
+        return modifiedOutput
     }
     
     private func checkAuthorizations() -> SFSpeechRecognizerAuthorizationStatus {
@@ -451,7 +481,6 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
     }
     
     @objc private func startSoundWaveAnimation() {
-        print("Wave fires")
         let xValueOrigin: CGFloat = self.circleView1.frame.origin.x
         let yValueOrigin: CGFloat = self.circleView1.frame.origin.y
         let modifier: CGFloat = 100
@@ -460,7 +489,7 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
             view.isHidden = false
         }
         DispatchQueue.main.async {
-            if self.audioEngine.isRunning {
+            if self.isAudioEngineRunning {
                 UIView.animate(withDuration: 1.0, delay: 0) {
                     self.circleView1.layer.cornerRadius = 125
                     self.circleView1.frame = CGRect(x: xValueOrigin-modifier, y: yValueOrigin-modifier, width: 250, height: 250)
@@ -497,12 +526,16 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
     private func startRecording() throws {
         // Cancel the previous recognition task.
         //startSoundWaveAnimation()
+        if audioInputBusCounter > 0 {
+            self.audioEngine = AVAudioEngine()
+            //self.audioEngine.detach(audioEngine.inputNode)
+        }
+        
+        isAudioEngineRunning = true
         HapticsManager.shared.vibrateForSelection()
         recognitionTask?.cancel()
         recognitionTask = nil
-        
         // Audio session, to get information from the microphone.
-        let audioSession = AVAudioSession.sharedInstance()
         try audioSession.setCategory(.record, mode: .measurement, options: .duckOthers)
         try audioSession.setActive(true, options: .notifyOthersOnDeactivation)
         let inputNode = audioEngine.inputNode
@@ -522,22 +555,23 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
             
             if let result = result {
                 isFinal = result.isFinal
-                print("Text: \(result.bestTranscription.formattedString)")
                 self.textField.text = result.bestTranscription.formattedString
             }
             
             if error != nil || isFinal {
                 // Stop recognizing speech if there is a problem.
                 self.audioEngine.stop()
-                inputNode.removeTap(onBus: 0)
-                
+                inputNode.removeTap(onBus: self.audioInputBusCounter)
+                self.audioEngine.reset()
+                self.audioEngine.detach(inputNode)
                 self.recognitionRequest = nil
                 self.recognitionTask = nil
+                
             }
         }
         
         // Configure the microphone.
-        let recordingFormat = inputNode.outputFormat(forBus: 0)
+        let recordingFormat = inputNode.outputFormat(forBus: audioInputBusCounter)
         // The buffer size tells us how much data should the microphone record before dumping it into the recognition request.
         inputNode.installTap(onBus: 0, bufferSize: 1024, format: recordingFormat) { (buffer: AVAudioPCMBuffer, when: AVAudioTime) in
             self.recognitionRequest?.append(buffer)
@@ -610,15 +644,16 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
                     })
                 }
             } else {
-                if audioEngine.isRunning {
+                if isAudioEngineRunning {
                     audioEngine.stop()
+                    isAudioEngineRunning = false
                     animationTimer?.invalidate()
                     sendQuestion(textField: textField)
                 } else {
                     do {
                         try startRecording()
                     } catch {
-                        print("bad bad bad")
+                        print("Could not start the recording")
                     }
                     startTimerDown()
                 }
@@ -636,15 +671,20 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
                 })
             }
         } else {
-            if audioEngine.isRunning {
+            if isAudioEngineRunning {
                 audioEngine.stop()
+                self.audioEngine.reset()
+                self.recognitionRequest = nil
+                self.recognitionTask = nil
+                isAudioEngineRunning = false
+                audioInputBusCounter = audioInputBusCounter + 1
                 animationTimer?.invalidate()
                 sendQuestion(textField: textField)
             } else {
                 do {
                     try startRecording()
                 } catch {
-                    print("bad bad bad")
+                    print("Could not start the recording")
                 }
                 startTimerDown()
             }
