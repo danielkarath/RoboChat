@@ -136,6 +136,17 @@ class MicrophoneViewController: UIViewController, AVSpeechSynthesizerDelegate {
         return imageView
     }()
     
+    private let microphoneFakeButton: UIButton = {
+        let button = UIButton()
+        let size: CGFloat = 140
+        let centerValue: CGFloat = (UIScreen.main.bounds.width-size) / 2
+        button.frame = CGRect(x: centerValue, y: centerValue, width: size, height: size)
+        button.isHidden = false
+        button.setTitle("", for: .normal)
+        button.setTitle("", for: .highlighted)
+        return button
+    }()
+    
     private var isAudioEngineRunning: Bool = false
     private var audioInputBusCounter: Int = 0
     var delegate: MicrophoneViewControllerDelegate?
@@ -144,11 +155,12 @@ class MicrophoneViewController: UIViewController, AVSpeechSynthesizerDelegate {
         super.viewDidLoad()
         setupView()
         backButton.addTarget(self, action: #selector(backButtonTapped(_:)), for: .touchUpInside)
+        microphoneFakeButton.addTarget(self, action: #selector(imageViewTapped(_:)), for: .touchUpInside)
         view.backgroundColor = simpleBackgroundColor.withAlphaComponent(0.20)
         setupConstraints()
         startSoundWaveAnimation()
         setupDoubleTapRecognizer(view: view)
-        DispatchQueue.main.async {
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.50) {
             self.microphoneImageView.circleAnimation(image: self.microphoneImageView, borderColor: self.mainColor, cornerRadious: 70, animationTime: 1.0)
         }
         countdownTimer = Timer.scheduledTimer(timeInterval: 1.0, target: self, selector: #selector(updateTimer), userInfo: nil, repeats: false)
@@ -179,6 +191,11 @@ class MicrophoneViewController: UIViewController, AVSpeechSynthesizerDelegate {
             microphoneImageView.widthAnchor.constraint(equalToConstant: 140),
             microphoneImageView.heightAnchor.constraint(equalToConstant: 140),
             
+            microphoneFakeButton.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+            microphoneFakeButton.centerYAnchor.constraint(equalTo: view.centerYAnchor),
+            microphoneFakeButton.widthAnchor.constraint(equalToConstant: 140),
+            microphoneFakeButton.heightAnchor.constraint(equalToConstant: 140),
+            
             circleView1.centerXAnchor.constraint(equalTo: microphoneImageView.centerXAnchor),
             circleView1.centerYAnchor.constraint(equalTo: microphoneImageView.centerYAnchor),
             circleView1.widthAnchor.constraint(equalToConstant: 120),
@@ -199,6 +216,7 @@ class MicrophoneViewController: UIViewController, AVSpeechSynthesizerDelegate {
         for subview in views {
             view.addSubview(subview)
         }
+        view.addSubview(microphoneFakeButton)
         lowerView.addSubview(speechTextLabel)
         upperLineView.addSubview(backButton)
         speechRecognizer = addVoiceRecognier(language: .English)
@@ -358,6 +376,12 @@ class MicrophoneViewController: UIViewController, AVSpeechSynthesizerDelegate {
     }
     
     @objc private func handleDoubleTap() {
+        if audioEngine.isRunning {
+            stopRecording()
+        }
+    }
+    
+    @objc func imageViewTapped(_ sender: UIButton) {
         if audioEngine.isRunning {
             stopRecording()
         }

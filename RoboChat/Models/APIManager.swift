@@ -12,8 +12,8 @@ final class APIManager {
     static let shared = APIManager()
     
     @frozen enum Constants {
-        //static let secretKey: String = "add OpenAI Secret Ket Here"
-        static let secretKey: String = "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"  //add OpenAI Secret Ket Here
+        static let secretKey: String = "add OpenAI Secret Ket Here"
+        
     }
     
     private var client: OpenAISwift?
