@@ -16,7 +16,7 @@ enum VoiceLanguage: String {
     case Spanish = "es-ES"
 }
 
-class ViewController: UIViewController, UITableViewDataSource, UITableViewDelegate, UITextFieldDelegate, AVSpeechSynthesizerDelegate, SFSpeechRecognizerDelegate {
+class MainViewController: UIViewController, UITableViewDataSource, UITableViewDelegate, UITextFieldDelegate, AVSpeechSynthesizerDelegate, SFSpeechRecognizerDelegate, MicrophoneViewControllerDelegate {
     
     private let synthesizer = AVSpeechSynthesizer()
     private var speechRecognizer: SFSpeechRecognizer?
@@ -26,7 +26,6 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
     private let audioSession = AVAudioSession.sharedInstance()
     private var audioEngine = AVAudioEngine()
     
-    private var countdownTimer: Timer?
     private var animationTimer: Timer?
     private var errorExitTimer: Timer?
     
@@ -36,14 +35,16 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
     private var isAudioEngineRunning: Bool = false
     
     // MARK: - Color constants
-    private let textColor: UIColor = UIColor(named: "textColor") ?? UIColor(red: 28/255, green: 28/244, blue: 32/255, alpha: 1.0)
-    private let lowerViewBackgroundColor: UIColor = UIColor(named: "lowerBackgroundColor") ?? UIColor(red: 240/255, green: 240/244, blue: 251/255, alpha: 1.0)
-    private let simpleBackgroundColor: UIColor = UIColor(named: "simpleBackgroundColor") ?? UIColor(red: 212/255, green: 212/255, blue: 216/255, alpha: 1.0)
+    private let textColor: UIColor = UIColor(named: "textColor") ?? UIColor(red: 212/255, green: 212/244, blue: 216/255, alpha: 1.0)
+    private let lowerViewBackgroundColor: UIColor = UIColor(named: "lowerBackgroundColor") ?? UIColor(red: 58/255, green: 58/244, blue: 59/255, alpha: 1.0)
+    private let simpleBackgroundColor: UIColor = UIColor(named: "simpleBackgroundColor") ?? UIColor(red: 28/255, green: 28/255, blue: 32/255, alpha: 1.0)
     private let highlightedBackgroundColor: UIColor = UIColor(named: "highlightedBackgroundColor") ?? UIColor(red: 247/255, green: 247/255, blue: 251/255, alpha: 1.0)
     private let mainColor: UIColor = UIColor(named: "mainColor") ?? UIColor(red: 120/255, green: 120/244, blue: 220/255, alpha: 1.0)
     private let errorColor: UIColor = UIColor(named: "errorColor") ?? UIColor(red: 245/255, green: 61/244, blue: 73/255, alpha: 1.0)
     private let activeMicImageView = UIImageView(image: UIImage(named: "microphoneIcon"))
     private let inactiveMicImageView = UIImageView(image: UIImage(named: "microphoneIconInactive"))
+    private let clearIcon = UIImageView(image: UIImage(named: "clearIcon"))
+    private let clearIconInactive = UIImageView(image: UIImage(named: "clearIconInactive"))
     
     // MARK: - Private View Components
     private let lowerView: UIView = {
@@ -156,19 +157,11 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
     
     private let clearTextButton: UIButton = {
         let button = UIButton()
-        let title: String = "clear"
-        let mainColor: UIColor = UIColor(named: "mainColor") ?? UIColor(red: 120/255, green: 120/244, blue: 220/255, alpha: 1.0)
+        button.frame.size = CGSize(width: 32, height: 32)
+        button.clipsToBounds = true
+        button.setTitle("", for: .normal)
+        button.isUserInteractionEnabled = true
         button.translatesAutoresizingMaskIntoConstraints = false
-        let range = (title as NSString).range(of: title)
-        var buttonFont: UIFont?
-        buttonFont = UIFont(name: "Avenir Next", size: 15)
-        let attributedText = NSMutableAttributedString(string: title, attributes: [NSMutableAttributedString.Key.font: buttonFont!])
-        attributedText.addAttribute(NSAttributedString.Key.foregroundColor, value: mainColor, range: range)
-        attributedText.addAttribute(NSAttributedString.Key.kern, value: 1.2, range: range)
-        button.setAttributedTitle(attributedText, for: .normal)
-        button.layer.cornerRadius = 8
-        button.layer.borderColor = mainColor.cgColor
-        button.layer.borderWidth = 2
         button.addTarget(self, action: #selector(clearButtonTapped(_:)), for: .touchUpInside)
         return button
     }()
@@ -235,6 +228,7 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
         speechRecognitionAuth = checkAuthorizations()
         
         textField.becomeFirstResponder()
+        setupClearButton()
     }
     
     private func setupConstraints() {
@@ -272,7 +266,7 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
             clearTextButton.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 10),
             clearTextButton.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: -16),
             clearTextButton.heightAnchor.constraint(equalToConstant: 32),
-            clearTextButton.widthAnchor.constraint(equalToConstant: 72),
+            clearTextButton.widthAnchor.constraint(equalToConstant: 32),
             
             circleView1.bottomAnchor.constraint(equalTo: lowerView.topAnchor, constant: -26),
             circleView1.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: -26),
@@ -298,6 +292,13 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
             chatTableView.rightAnchor.constraint(equalTo: view.safeAreaLayoutGuide.rightAnchor),
         ])
         
+    }
+    
+    private func setupClearButton() {
+        let imageView = clearIcon
+        imageView.frame = CGRect(x: clearTextButton.layer.frame.minX, y: clearTextButton.layer.frame.minY, width: 32, height: 32)
+        imageView.contentMode = .scaleAspectFit
+        clearTextButton.addSubview(imageView)
     }
     
     private func setupSendButton(isEnabled: Bool) {
@@ -347,11 +348,11 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
                             self?.errorLabel.isHidden = true
                             do{
                                 let _ = try self?.audioSession.setCategory(AVAudioSession.Category.playback,
-                                                                                        options: .duckOthers)
-                              }catch{
-                                  print(error)
-                              }
-                            self?.say(synthesizer: self!.synthesizer, phrase: output, onlyIfVoiceOverOn: false, isPriority: true)
+                                                                           options: .duckOthers)
+                            }catch{
+                                print(error)
+                            }
+                            self?.say(synthesizer: self!.synthesizer, phrase: modifiedOutput, onlyIfVoiceOverOn: false, isPriority: true)
                         }
                     case .failure:
                         print("ERROR: Failed to get response from APIManager.")
@@ -372,16 +373,12 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
         }
     }
     
-    private func startTimerDown() {
-        //startSoundWaveAnimation()
-        animationTimer = Timer.scheduledTimer(timeInterval: 3.0, target: self, selector: #selector(startSoundWaveAnimation), userInfo: nil, repeats: true)
-    }
-    
     private func modifyOutput(output: String) -> String {
         var modifiedOutput: String = output.trimmingCharacters(in: .newlines)
         var outputChars: [Character] = []
         print("original output: \(output)")
         modifiedOutput = modifiedOutput.replacingOccurrences(of: "\n", with: " ", options: .literal)
+        modifiedOutput = modifiedOutput.replacingOccurrences(of: "?", with: "", options: .literal)
         let modifiedOutputLength: Int = modifiedOutput.count
         var i: Int = 0
         var j: Int = 0
@@ -396,7 +393,8 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
             j = j + 1
         }
         
-        print("Complete char array: \(outputChars)")
+        //modifiedOutput = String(outputChars)
+        print("return statement: \(modifiedOutput)")
         return modifiedOutput
     }
     
@@ -407,7 +405,6 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
             imageView.frame = CGRect(x: microphoneButton.layer.frame.minX, y: microphoneButton.layer.frame.minY, width: 70, height: 70)
             imageView.contentMode = .scaleAspectFit
             microphoneButton.addSubview(imageView)
-            speechRecognizer = addVoiceRecognier(language: .English)
             //startTimerDown()
             break
         case .denied:
@@ -440,8 +437,7 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
                 DispatchQueue.main.async {
                     switch authStatus {
                     case .authorized:
-                        self.speechRecognizer = self.addVoiceRecognier(language: .English)
-                        //self.startTimerDown()
+                        performSegueToMicrophoneVC()
                         // The user has granted authorization to the speech recognizer.
                         // You can now start using the speech recognizer.
                         break
@@ -466,7 +462,6 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
                         // Show an alert or take other appropriate action.
                         break
                     case .notDetermined:
-                        self.speechRecognizer = self.addVoiceRecognier(language: .English)
                         break
                     @unknown default:
                         // This case should never be reached, as the SFSpeechRecognizer authorization status should always be known.
@@ -478,116 +473,12 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
             errorLabel.text = "An error occured while requesting authorization"
         }
     }
-    
-    private func addVoiceRecognier(language: VoiceLanguage) -> SFSpeechRecognizer {
-        let speechRecognizer = SFSpeechRecognizer(locale: Locale(identifier: language.rawValue))
-        speechRecognizer?.delegate = self
-        return speechRecognizer!
-    }
-    
-    @objc private func startSoundWaveAnimation() {
-        let xValueOrigin: CGFloat = self.circleView1.frame.origin.x
-        let yValueOrigin: CGFloat = self.circleView1.frame.origin.y
-        let modifier: CGFloat = 100
-        
-        for view in [circleView1, circleView2, circleView3] {
-            view.isHidden = false
-        }
-        DispatchQueue.main.async {
-            if self.isAudioEngineRunning {
-                UIView.animate(withDuration: 1.0, delay: 0) {
-                    self.circleView1.layer.cornerRadius = 125
-                    self.circleView1.frame = CGRect(x: xValueOrigin-modifier, y: yValueOrigin-modifier, width: 250, height: 250)
-                    
-                    UIView.animate(withDuration: 1.0, delay: 1.00) {
-                        self.circleView1.layer.cornerRadius = 25
-                        self.circleView1.frame = CGRect(x: xValueOrigin, y: yValueOrigin, width: 50, height: 50)
-                    }
-                }
-                
-                UIView.animate(withDuration: 1.0, delay: 0.50) {
-                    self.circleView2.layer.cornerRadius = 125
-                    self.circleView2.frame = CGRect(x: xValueOrigin-modifier, y: yValueOrigin-modifier, width: 250, height: 250)
-                    
-                    UIView.animate(withDuration: 1.0, delay: 1.50) {
-                        self.circleView2.layer.cornerRadius = 25
-                        self.circleView2.frame = CGRect(x: xValueOrigin, y: yValueOrigin, width: 50, height: 50)
-                    }
-                }
-                
-                UIView.animate(withDuration: 1.0, delay: 1.0) {
-                    self.circleView3.layer.cornerRadius = 125
-                    self.circleView3.frame = CGRect(x: xValueOrigin-modifier, y: yValueOrigin-modifier, width: 250, height: 250)
-                    
-                    UIView.animate(withDuration: 1.0, delay: 2.0) {
-                        self.circleView3.layer.cornerRadius = 25
-                        self.circleView3.frame = CGRect(x: xValueOrigin, y: yValueOrigin, width: 50, height: 50)
-                    }
-                }
-            }
-        }
-    }
-    
-    private func startRecording() throws {
-        // Cancel the previous recognition task.
-        //startSoundWaveAnimation()
-        if audioInputBusCounter > 0 {
-            self.audioEngine = AVAudioEngine()
-            //self.audioEngine.detach(audioEngine.inputNode)
-        }
-        
-        isAudioEngineRunning = true
-        HapticsManager.shared.vibrateForSelection()
-        recognitionTask?.cancel()
-        recognitionTask = nil
-        // Audio session, to get information from the microphone.
-        try audioSession.setCategory(.record, mode: .measurement, options: .duckOthers)
-        try audioSession.setActive(true, options: .notifyOthersOnDeactivation)
-        let inputNode = audioEngine.inputNode
-        
-        // The AudioBuffer
-        recognitionRequest = SFSpeechAudioBufferRecognitionRequest()
-        recognitionRequest!.shouldReportPartialResults = true
-        
-        // Force speech recognition to be on-device
-        if #available(iOS 13, *) {
-            recognitionRequest!.requiresOnDeviceRecognition = true
-        }
-        
-        // Actually create the recognition task. We need to keep a pointer to it so we can stop it.
-        recognitionTask = speechRecognizer?.recognitionTask(with: recognitionRequest!) { result, error in
-            var isFinal = false
             
-            if let result = result {
-                isFinal = result.isFinal
-                self.textField.text = result.bestTranscription.formattedString
-            }
-            
-            if error != nil || isFinal {
-                // Stop recognizing speech if there is a problem.
-                self.audioEngine.stop()
-                inputNode.removeTap(onBus: self.audioInputBusCounter)
-                self.audioEngine.reset()
-                self.audioEngine.detach(inputNode)
-                self.recognitionRequest = nil
-                self.recognitionTask = nil
-                
-            }
-        }
-        
-        // Configure the microphone.
-        let recordingFormat = inputNode.outputFormat(forBus: audioInputBusCounter)
-        // The buffer size tells us how much data should the microphone record before dumping it into the recognition request.
-        inputNode.installTap(onBus: 0, bufferSize: 1024, format: recordingFormat) { (buffer: AVAudioPCMBuffer, when: AVAudioTime) in
-            self.recognitionRequest?.append(buffer)
-        }
-        
-        audioEngine.prepare()
-        do {
-            try audioEngine.start()
-        } catch {
-            print("ERROR: \(error.localizedDescription)")
-        }
+    func performSegueToMicrophoneVC() {
+        let secondViewController = MicrophoneViewController()
+        secondViewController.delegate = self
+        secondViewController.modalPresentationStyle = .popover
+        self.present(secondViewController, animated: true, completion: nil)
     }
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
@@ -651,19 +542,7 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
                     })
                 }
             } else {
-                if isAudioEngineRunning {
-                    audioEngine.stop()
-                    isAudioEngineRunning = false
-                    animationTimer?.invalidate()
-                    sendQuestion(textField: textField)
-                } else {
-                    do {
-                        try startRecording()
-                    } catch {
-                        print("Could not start the recording")
-                    }
-                    startTimerDown()
-                }
+                performSegueToMicrophoneVC()
             }
         }
     }
@@ -678,24 +557,13 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
                 })
             }
         } else {
-            if isAudioEngineRunning {
-                audioEngine.stop()
-                self.audioEngine.reset()
-                self.recognitionRequest = nil
-                self.recognitionTask = nil
-                isAudioEngineRunning = false
-                audioInputBusCounter = audioInputBusCounter + 1
-                animationTimer?.invalidate()
-                sendQuestion(textField: textField)
-            } else {
-                do {
-                    try startRecording()
-                } catch {
-                    print("Could not start the recording")
-                }
-                startTimerDown()
-            }
+            performSegueToMicrophoneVC()
         }
+    }
+    
+    func didAddSpeechToText(_ text: String) {
+        textField.text = text
+        sendQuestion(textField: textField)
     }
     
     public func say(synthesizer: AVSpeechSynthesizer, phrase: String, onlyIfVoiceOverOn: Bool = true, isPriority: Bool, language: VoiceLanguage = .English, rate: Float = AVSpeechUtteranceDefaultSpeechRate, volume: Float = 1.0) {
@@ -704,19 +572,19 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
         if onlyIfVoiceOverOn {
             guard UIAccessibility.isVoiceOverRunning else { return }
             if synthesizer.isSpeaking || UIAccessibility.isVoiceOverRunning {
-                    // Set up a timer to speak the utterance in 1 second
-                    Timer.scheduledTimer(withTimeInterval: 2.5, repeats: false) { _ in
-                        let utterance = AVSpeechUtterance(string: phrase)
-                        utterance.rate = rate
-                        utterance.volume = volume
-                        utterance.voice = voice
-                        if isPriority {
-                            UIAccessibility.post(notification: .layoutChanged, argument: nil)
-                            //UIAccessibility.post(notification: .layoutChanged, argument: nil)
-                            utterance.preUtteranceDelay = 0
-                        }
-                        synthesizer.speak(utterance)
+                // Set up a timer to speak the utterance in 1 second
+                Timer.scheduledTimer(withTimeInterval: 2.5, repeats: false) { _ in
+                    let utterance = AVSpeechUtterance(string: phrase)
+                    utterance.rate = rate
+                    utterance.volume = volume
+                    utterance.voice = voice
+                    if isPriority {
+                        UIAccessibility.post(notification: .layoutChanged, argument: nil)
+                        //UIAccessibility.post(notification: .layoutChanged, argument: nil)
+                        utterance.preUtteranceDelay = 0
                     }
+                    synthesizer.speak(utterance)
+                }
             } else {
                 let utterance = AVSpeechUtterance(string: phrase)
                 utterance.rate = rate
@@ -731,18 +599,18 @@ class ViewController: UIViewController, UITableViewDataSource, UITableViewDelega
             }
         } else {
             if synthesizer.isSpeaking || UIAccessibility.isVoiceOverRunning {
-                    // Set up a timer to speak the utterance in 1 second
-                    Timer.scheduledTimer(withTimeInterval: 2.5, repeats: false) { _ in
-                        let utterance = AVSpeechUtterance(string: phrase)
-                        utterance.rate = rate
-                        utterance.volume = volume
-                        utterance.voice = voice
-                        if isPriority {
-                            UIAccessibility.post(notification: .layoutChanged, argument: nil)
-                            utterance.preUtteranceDelay = 0
-                        }
-                        synthesizer.speak(utterance)
+                // Set up a timer to speak the utterance in 1 second
+                Timer.scheduledTimer(withTimeInterval: 2.5, repeats: false) { _ in
+                    let utterance = AVSpeechUtterance(string: phrase)
+                    utterance.rate = rate
+                    utterance.volume = volume
+                    utterance.voice = voice
+                    if isPriority {
+                        UIAccessibility.post(notification: .layoutChanged, argument: nil)
+                        utterance.preUtteranceDelay = 0
                     }
+                    synthesizer.speak(utterance)
+                }
             } else {
                 let utterance = AVSpeechUtterance(string: phrase)
                 utterance.rate = rate

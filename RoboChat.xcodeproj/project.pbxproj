@@ -7,10 +7,10 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		39686E262972F6A9007868F4 /* MicrophoneViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 39686E252972F6A9007868F4 /* MicrophoneViewController.swift */; };
 		39C52F6D296C30B700D91F12 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 39C52F6C296C30B700D91F12 /* AppDelegate.swift */; };
 		39C52F6F296C30B700D91F12 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 39C52F6E296C30B700D91F12 /* SceneDelegate.swift */; };
-		39C52F71296C30B700D91F12 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 39C52F70296C30B700D91F12 /* ViewController.swift */; };
-		39C52F74296C30B700D91F12 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 39C52F72296C30B700D91F12 /* Main.storyboard */; };
+		39C52F71296C30B700D91F12 /* MainViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 39C52F70296C30B700D91F12 /* MainViewController.swift */; };
 		39C52F76296C30B700D91F12 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 39C52F75296C30B700D91F12 /* Assets.xcassets */; };
 		39C52F79296C30B700D91F12 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 39C52F77296C30B700D91F12 /* LaunchScreen.storyboard */; };
 		39C52F82296C314500D91F12 /* OpenAISwift in Frameworks */ = {isa = PBXBuildFile; productRef = 39C52F81296C314500D91F12 /* OpenAISwift */; };
@@ -20,11 +20,11 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		39686E252972F6A9007868F4 /* MicrophoneViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MicrophoneViewController.swift; sourceTree = "<group>"; };
 		39C52F69296C30B700D91F12 /* RoboChat.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = RoboChat.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		39C52F6C296C30B700D91F12 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		39C52F6E296C30B700D91F12 /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
-		39C52F70296C30B700D91F12 /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
-		39C52F73296C30B700D91F12 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
+		39C52F70296C30B700D91F12 /* MainViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainViewController.swift; sourceTree = "<group>"; };
 		39C52F75296C30B700D91F12 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		39C52F78296C30B700D91F12 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		39C52F7A296C30B700D91F12 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -45,6 +45,36 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		39686E222972F62A007868F4 /* Models */ = {
+			isa = PBXGroup;
+			children = (
+				39C52F83296C326200D91F12 /* APIManager.swift */,
+			);
+			path = Models;
+			sourceTree = "<group>";
+		};
+		39686E232972F64B007868F4 /* Controllers */ = {
+			isa = PBXGroup;
+			children = (
+				39C52F70296C30B700D91F12 /* MainViewController.swift */,
+				39686E252972F6A9007868F4 /* MicrophoneViewController.swift */,
+			);
+			path = Controllers;
+			sourceTree = "<group>";
+		};
+		39686E242972F66B007868F4 /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				39C52F6C296C30B700D91F12 /* AppDelegate.swift */,
+				39C52F6E296C30B700D91F12 /* SceneDelegate.swift */,
+				39C52F85296C90D700D91F12 /* extensions.swift */,
+				39C52F87296C9B5900D91F12 /* HapticsManager.swift */,
+				39C52F77296C30B700D91F12 /* LaunchScreen.storyboard */,
+				39C52F75296C30B700D91F12 /* Assets.xcassets */,
+			);
+			path = Resources;
+			sourceTree = "<group>";
+		};
 		39C52F60296C30B700D91F12 = {
 			isa = PBXGroup;
 			children = (
@@ -64,16 +94,10 @@
 		39C52F6B296C30B700D91F12 /* RoboChat */ = {
 			isa = PBXGroup;
 			children = (
-				39C52F6C296C30B700D91F12 /* AppDelegate.swift */,
-				39C52F83296C326200D91F12 /* APIManager.swift */,
-				39C52F6E296C30B700D91F12 /* SceneDelegate.swift */,
-				39C52F70296C30B700D91F12 /* ViewController.swift */,
-				39C52F85296C90D700D91F12 /* extensions.swift */,
-				39C52F72296C30B700D91F12 /* Main.storyboard */,
-				39C52F75296C30B700D91F12 /* Assets.xcassets */,
-				39C52F77296C30B700D91F12 /* LaunchScreen.storyboard */,
+				39686E242972F66B007868F4 /* Resources */,
+				39686E232972F64B007868F4 /* Controllers */,
+				39686E222972F62A007868F4 /* Models */,
 				39C52F7A296C30B700D91F12 /* Info.plist */,
-				39C52F87296C9B5900D91F12 /* HapticsManager.swift */,
 			);
 			path = RoboChat;
 			sourceTree = "<group>";
@@ -144,7 +168,6 @@
 			files = (
 				39C52F79296C30B700D91F12 /* LaunchScreen.storyboard in Resources */,
 				39C52F76296C30B700D91F12 /* Assets.xcassets in Resources */,
-				39C52F74296C30B700D91F12 /* Main.storyboard in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -158,7 +181,8 @@
 				39C52F88296C9B5900D91F12 /* HapticsManager.swift in Sources */,
 				39C52F86296C90D700D91F12 /* extensions.swift in Sources */,
 				39C52F84296C326200D91F12 /* APIManager.swift in Sources */,
-				39C52F71296C30B700D91F12 /* ViewController.swift in Sources */,
+				39C52F71296C30B700D91F12 /* MainViewController.swift in Sources */,
+				39686E262972F6A9007868F4 /* MicrophoneViewController.swift in Sources */,
 				39C52F6D296C30B700D91F12 /* AppDelegate.swift in Sources */,
 				39C52F6F296C30B700D91F12 /* SceneDelegate.swift in Sources */,
 			);
@@ -167,14 +191,6 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXVariantGroup section */
-		39C52F72296C30B700D91F12 /* Main.storyboard */ = {
-			isa = PBXVariantGroup;
-			children = (
-				39C52F73296C30B700D91F12 /* Base */,
-			);
-			name = Main.storyboard;
-			sourceTree = "<group>";
-		};
 		39C52F77296C30B700D91F12 /* LaunchScreen.storyboard */ = {
 			isa = PBXVariantGroup;
 			children = (
@@ -316,9 +332,8 @@
 				INFOPLIST_KEY_NSSpeechRecognitionUsageDescription = "Please authorize speech recognition to ask questions with speech.";
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
-				INFOPLIST_KEY_UIMainStoryboardFile = Main;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations = UIInterfaceOrientationPortrait;
-				IPHONEOS_DEPLOYMENT_TARGET = 16.2;
+				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -351,9 +366,8 @@
 				INFOPLIST_KEY_NSSpeechRecognitionUsageDescription = "Please authorize speech recognition to ask questions with speech.";
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
-				INFOPLIST_KEY_UIMainStoryboardFile = Main;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations = UIInterfaceOrientationPortrait;
-				IPHONEOS_DEPLOYMENT_TARGET = 16.2;
+				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
