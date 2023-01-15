@@ -64,10 +64,38 @@ class MicrophoneViewController: UIViewController, AVSpeechSynthesizerDelegate {
         return view
     }()
     
+    private let viewTitleLabel: UILabel = {
+        let label = UILabel()
+        label.text = "Voice recording"
+        label.font = UIFont(name: "Avenir Next", size: 20)
+        label.textColor = UIColor(red: 212/255, green: 212/244, blue: 216/255, alpha: 1.0)
+        label.tintColor = UIColor(red: 212/255, green: 212/244, blue: 216/255, alpha: 1.0)
+        label.textAlignment = .center
+        label.contentMode = .top
+        label.numberOfLines = 1
+        label.sizeToFit()
+        label.translatesAutoresizingMaskIntoConstraints = false
+        return label
+    }()
+    
+    private let InstructionsLabel: UILabel = {
+        let label = UILabel()
+        label.text = "Recording starting..."
+        label.font = UIFont(name: "Avenir Next", size: 28)
+        label.textColor = UIColor(red: 212/255, green: 212/244, blue: 216/255, alpha: 1.0)
+        label.tintColor = UIColor(red: 212/255, green: 212/244, blue: 216/255, alpha: 1.0)
+        label.textAlignment = .center
+        label.contentMode = .top
+        label.numberOfLines = 0
+        label.sizeToFit()
+        label.translatesAutoresizingMaskIntoConstraints = false
+        return label
+    }()
+    
     private let speechTextLabel: UILabel = {
         let label = UILabel()
         label.text = ""
-        label.font = UIFont(name: "Avenir Next", size: 18)
+        label.font = UIFont(name: "Avenir Next", size: 20)
         label.textAlignment = .center
         label.contentMode = .top
         label.numberOfLines = 0
@@ -85,6 +113,21 @@ class MicrophoneViewController: UIViewController, AVSpeechSynthesizerDelegate {
         imageView.frame = CGRect(x: 0, y: 10, width: width, height: height)
         button.frame = CGRect(x:  16, y: 0, width: width * 2, height: height * 2) //.size = CGSize(width: width, height: height)
         button.addSubview(imageView)
+        return button
+    }()
+    
+    private let doneButton: UIButton = {
+        let button = UIButton()
+        let width: CGFloat = 24
+        let height: CGFloat = width * 1.33
+        button.frame.size = CGSize(width: width * 2, height: height * 2) //.size = CGSize(width: width, height: height)
+        button.setTitleColor(UIColor(red: 120/255, green: 120/244, blue: 220/255, alpha: 1.0), for: .normal)
+        button.titleLabel?.font = UIFont(name: "Avenir Next Demi Bold", size: 20)
+        button.setTitle("done", for: .normal)
+        button.setTitle("done", for: .highlighted)
+        button.translatesAutoresizingMaskIntoConstraints = false
+        button.isEnabled = false
+        button.isUserInteractionEnabled = false
         return button
     }()
     
@@ -155,6 +198,7 @@ class MicrophoneViewController: UIViewController, AVSpeechSynthesizerDelegate {
         super.viewDidLoad()
         setupView()
         backButton.addTarget(self, action: #selector(backButtonTapped(_:)), for: .touchUpInside)
+        doneButton.addTarget(self, action: #selector(doneButtonTapped(_:)), for: .touchUpInside)
         microphoneFakeButton.addTarget(self, action: #selector(imageViewTapped(_:)), for: .touchUpInside)
         view.backgroundColor = simpleBackgroundColor.withAlphaComponent(0.20)
         setupConstraints()
@@ -176,12 +220,17 @@ class MicrophoneViewController: UIViewController, AVSpeechSynthesizerDelegate {
 
     private func setupConstraints() {
         NSLayoutConstraint.activate([
-            speechTextLabel.heightAnchor.constraint(equalToConstant: 120),
-            speechTextLabel.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: 16),
-            speechTextLabel.leftAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leftAnchor, constant: 40),
+            speechTextLabel.heightAnchor.constraint(equalToConstant: 140),
+            speechTextLabel.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -32),
+            speechTextLabel.leftAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leftAnchor, constant: 16),
             speechTextLabel.rightAnchor.constraint(equalTo: view.safeAreaLayoutGuide.rightAnchor, constant: -16),
             
-            lowerView.heightAnchor.constraint(equalToConstant: 160),
+            InstructionsLabel.heightAnchor.constraint(equalToConstant: 40),
+            InstructionsLabel.topAnchor.constraint(equalTo: microphoneImageView.bottomAnchor, constant: 64),
+            InstructionsLabel.leftAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leftAnchor, constant: 32),
+            InstructionsLabel.rightAnchor.constraint(equalTo: view.safeAreaLayoutGuide.rightAnchor, constant: -32),
+            
+            lowerView.heightAnchor.constraint(equalToConstant: 180),
             lowerView.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: 0),
             lowerView.leftAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leftAnchor, constant: 0),
             lowerView.rightAnchor.constraint(equalTo: view.safeAreaLayoutGuide.rightAnchor, constant: 0),
@@ -195,6 +244,16 @@ class MicrophoneViewController: UIViewController, AVSpeechSynthesizerDelegate {
             microphoneFakeButton.centerYAnchor.constraint(equalTo: view.centerYAnchor),
             microphoneFakeButton.widthAnchor.constraint(equalToConstant: 140),
             microphoneFakeButton.heightAnchor.constraint(equalToConstant: 140),
+            
+            viewTitleLabel.centerXAnchor.constraint(equalTo: upperLineView.centerXAnchor, constant: -10),
+            viewTitleLabel.centerYAnchor.constraint(equalTo: upperLineView.centerYAnchor),
+            viewTitleLabel.heightAnchor.constraint(equalToConstant: 25),
+            viewTitleLabel.widthAnchor.constraint(equalToConstant: 200),
+            
+            doneButton.centerYAnchor.constraint(equalTo: upperLineView.centerYAnchor, constant: 0),
+            doneButton.widthAnchor.constraint(equalToConstant: 60),
+            doneButton.heightAnchor.constraint(equalToConstant: 32),
+            doneButton.rightAnchor.constraint(equalTo: upperLineView.rightAnchor, constant: -16),
             
             circleView1.centerXAnchor.constraint(equalTo: microphoneImageView.centerXAnchor),
             circleView1.centerYAnchor.constraint(equalTo: microphoneImageView.centerYAnchor),
@@ -217,8 +276,11 @@ class MicrophoneViewController: UIViewController, AVSpeechSynthesizerDelegate {
             view.addSubview(subview)
         }
         view.addSubview(microphoneFakeButton)
+        view.addSubview(InstructionsLabel)
         lowerView.addSubview(speechTextLabel)
         upperLineView.addSubview(backButton)
+        upperLineView.addSubview(viewTitleLabel)
+        upperLineView.addSubview(doneButton)
         speechRecognizer = addVoiceRecognier(language: .English)
     }
     
@@ -263,6 +325,8 @@ class MicrophoneViewController: UIViewController, AVSpeechSynthesizerDelegate {
             var isFinal = false
             
             if let result = result {
+                self.doneButton.isUserInteractionEnabled = true
+                self.doneButton.isEnabled = true
                 isFinal = result.isFinal
                 print("Text: \(result.bestTranscription.formattedString)")
                 self.speechTextLabel.text = result.bestTranscription.formattedString
@@ -291,6 +355,7 @@ class MicrophoneViewController: UIViewController, AVSpeechSynthesizerDelegate {
         } catch {
             print("ERROR: \(error.localizedDescription)")
         }
+        self.InstructionsLabel.text = "Ask me something"
         self.microphoneImageView.layer.sublayers?.forEach { $0.removeFromSuperlayer() }
     }
      
@@ -367,11 +432,16 @@ class MicrophoneViewController: UIViewController, AVSpeechSynthesizerDelegate {
         self.recognitionRequest = nil
         self.recognitionTask = nil
         isAudioEngineRunning = false
+        InstructionsLabel.text = "Sending question"
         audioInputBusCounter = audioInputBusCounter + 1
         animationTimer?.invalidate()
         microphoneImageView.circleAnimation(image: microphoneImageView, borderColor: mainColor, cornerRadious: 70, animationTime: 2.0)
-        DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
-            self.sendSpokenQuestion()
+        
+        guard speechTextLabel.text != nil else { return }
+        DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
+            if self.speechTextLabel.text != "" {
+                self.sendSpokenQuestion()
+            }
         }
     }
     
@@ -394,17 +464,29 @@ class MicrophoneViewController: UIViewController, AVSpeechSynthesizerDelegate {
             return
         }
         delegate?.didAddSpeechToText(speechTextLabel.text ?? "Failled to record question")
-        dismiss(animated: true, completion: nil)
+        DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {
+            self.dismiss(animated: true, completion: nil)
+        }
     }
     
-    @objc private func backButtonTapped(_ sender: UIButton) {
-        print("going back")
+    @objc private func doneButtonTapped(_ sender: UIButton) {
+        print("going back and sending question")
         if audioEngine.isRunning {
             stopRecording()
         } else {
             sendSpokenQuestion()
         }
         //dismiss(animated: true, completion: nil)
+    }
+    
+    @objc private func backButtonTapped(_ sender: UIButton) {
+        print("going back")
+        if audioEngine.isRunning {
+            stopRecording()
+            dismiss(animated: true, completion: nil)
+        } else {
+            dismiss(animated: true, completion: nil)
+        }
     }
 }
 
@@ -413,7 +495,7 @@ extension MicrophoneViewController: SFSpeechRecognizerDelegate {
         if available {
             "STARTED VOICE ROCOGNITION"
         } else {
-            print("fuck you")
+            print("The speechRecognizer is unavailable")
         }
     }
 }
