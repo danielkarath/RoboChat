@@ -197,6 +197,7 @@ class MicrophoneViewController: UIViewController, AVSpeechSynthesizerDelegate {
     override func viewDidLoad() {
         super.viewDidLoad()
         setupView()
+        overrideUserInterfaceStyle = .dark
         backButton.addTarget(self, action: #selector(backButtonTapped(_:)), for: .touchUpInside)
         doneButton.addTarget(self, action: #selector(doneButtonTapped(_:)), for: .touchUpInside)
         microphoneFakeButton.addTarget(self, action: #selector(imageViewTapped(_:)), for: .touchUpInside)

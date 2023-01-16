@@ -55,36 +55,6 @@ class MainViewController: UIViewController, UITableViewDataSource, UITableViewDe
         return view
     }()
     
-    private let circleView1: UIView = {
-        let view = UIView()
-        view.frame.size = CGSize(width: 50, height: 50)
-        view.layer.cornerRadius = view.layer.frame.size.width / 2
-        view.backgroundColor = UIColor(red: 120/255, green: 120/244, blue: 220/255, alpha: 0.50)
-        view.translatesAutoresizingMaskIntoConstraints = false
-        view.isHidden = true
-        return view
-    }()
-    
-    private let circleView2: UIView = {
-        let view = UIView()
-        view.frame.size = CGSize(width: 50, height: 50)
-        view.layer.cornerRadius = view.layer.frame.size.width / 2
-        view.backgroundColor = UIColor(red: 120/255, green: 120/244, blue: 220/255, alpha: 0.50)
-        view.translatesAutoresizingMaskIntoConstraints = false
-        view.isHidden = true
-        return view
-    }()
-    
-    private let circleView3: UIView = {
-        let view = UIView()
-        view.frame.size = CGSize(width: 50, height: 50)
-        view.layer.cornerRadius = view.layer.frame.size.width / 2
-        view.backgroundColor = UIColor(red: 120/255, green: 120/244, blue: 220/255, alpha: 0.50)
-        view.translatesAutoresizingMaskIntoConstraints = false
-        view.isHidden = true
-        return view
-    }()
-    
     private let titleLabel: UILabel = {
         let label = UILabel()
         label.text = "Ask me something"
@@ -195,6 +165,7 @@ class MainViewController: UIViewController, UITableViewDataSource, UITableViewDe
         chatTableView.separatorStyle = .none
         setupConstraints()
         setupDoubleTapRecognizer(view: view)
+        overrideUserInterfaceStyle = .dark
         // Do any additional setup after loading the view.
     }
     
@@ -202,9 +173,6 @@ class MainViewController: UIViewController, UITableViewDataSource, UITableViewDe
         view.addSubview(lowerView)
         view.addSubview(chatTableView)
         view.addSubview(clearTextButton)
-        view.addSubview(circleView1)
-        view.addSubview(circleView2)
-        view.addSubview(circleView3)
         view.addSubview(microphoneButton)
         view.addSubview(titleLabel)
         view.addSubview(errorLabel)
@@ -232,20 +200,29 @@ class MainViewController: UIViewController, UITableViewDataSource, UITableViewDe
     }
     
     private func setupConstraints() {
+        var lowerViewHeightModifier: CGFloat = 40
+        switch SizeManager.shared.getDeviceGroup() {
+        case .iPhone13cm:
+            lowerViewHeightModifier = 80
+        case .iPhone14cm, .iPhone15cm:
+            lowerViewHeightModifier = 60
+        default:
+            lowerViewHeightModifier = 50
+        }
         NSLayoutConstraint.activate([
-            lowerView.heightAnchor.constraint(equalTo: view.keyboardLayoutGuide.heightAnchor, constant: 40),
+            lowerView.heightAnchor.constraint(equalTo: view.keyboardLayoutGuide.heightAnchor, constant: lowerViewHeightModifier),
             lowerView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor),
             lowerView.leftAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leftAnchor),
             lowerView.rightAnchor.constraint(equalTo: view.safeAreaLayoutGuide.rightAnchor),
             
             textField.heightAnchor.constraint(equalToConstant: 40),
             textField.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor, constant: 16),
-            textField.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: -110),
+            textField.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: -118),
             textField.bottomAnchor.constraint(equalTo: view.keyboardLayoutGuide.topAnchor, constant: -16),
             
             sendQuestionButton.heightAnchor.constraint(equalToConstant: 40),
             sendQuestionButton.widthAnchor.constraint(equalToConstant: 86),
-            sendQuestionButton.leadingAnchor.constraint(equalTo: textField.trailingAnchor, constant: 8),
+            sendQuestionButton.leadingAnchor.constraint(equalTo: textField.trailingAnchor, constant: 16),
             sendQuestionButton.bottomAnchor.constraint(equalTo: view.keyboardLayoutGuide.topAnchor, constant: -16),
             
             titleLabel.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 8),
@@ -267,19 +244,6 @@ class MainViewController: UIViewController, UITableViewDataSource, UITableViewDe
             clearTextButton.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: -16),
             clearTextButton.heightAnchor.constraint(equalToConstant: 32),
             clearTextButton.widthAnchor.constraint(equalToConstant: 32),
-            
-            circleView1.bottomAnchor.constraint(equalTo: lowerView.topAnchor, constant: -26),
-            circleView1.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: -26),
-            circleView1.heightAnchor.constraint(equalToConstant: 50),
-            circleView1.widthAnchor.constraint(equalToConstant: 50),
-            circleView2.bottomAnchor.constraint(equalTo: lowerView.topAnchor, constant: -26),
-            circleView2.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: -26),
-            circleView2.heightAnchor.constraint(equalToConstant: 50),
-            circleView2.widthAnchor.constraint(equalToConstant: 50),
-            circleView3.bottomAnchor.constraint(equalTo: lowerView.topAnchor, constant: -26),
-            circleView3.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: -26),
-            circleView3.heightAnchor.constraint(equalToConstant: 50),
-            circleView3.widthAnchor.constraint(equalToConstant: 50),
             
             microphoneButton.bottomAnchor.constraint(equalTo: lowerView.topAnchor, constant: -16),
             microphoneButton.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: -16),

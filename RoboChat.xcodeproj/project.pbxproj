@@ -17,6 +17,7 @@
 		39C52F84296C326200D91F12 /* APIManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 39C52F83296C326200D91F12 /* APIManager.swift */; };
 		39C52F86296C90D700D91F12 /* extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 39C52F85296C90D700D91F12 /* extensions.swift */; };
 		39C52F88296C9B5900D91F12 /* HapticsManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 39C52F87296C9B5900D91F12 /* HapticsManager.swift */; };
+		39E52FDE2975977900C7EE6D /* SizeManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 39E52FDD2975977900C7EE6D /* SizeManager.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -31,6 +32,7 @@
 		39C52F83296C326200D91F12 /* APIManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = APIManager.swift; sourceTree = "<group>"; };
 		39C52F85296C90D700D91F12 /* extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = extensions.swift; sourceTree = "<group>"; };
 		39C52F87296C9B5900D91F12 /* HapticsManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HapticsManager.swift; sourceTree = "<group>"; };
+		39E52FDD2975977900C7EE6D /* SizeManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SizeManager.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -49,6 +51,7 @@
 			isa = PBXGroup;
 			children = (
 				39C52F83296C326200D91F12 /* APIManager.swift */,
+				39E52FDD2975977900C7EE6D /* SizeManager.swift */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -180,6 +183,7 @@
 			files = (
 				39C52F88296C9B5900D91F12 /* HapticsManager.swift in Sources */,
 				39C52F86296C90D700D91F12 /* extensions.swift in Sources */,
+				39E52FDE2975977900C7EE6D /* SizeManager.swift in Sources */,
 				39C52F84296C326200D91F12 /* APIManager.swift in Sources */,
 				39C52F71296C30B700D91F12 /* MainViewController.swift in Sources */,
 				39686E262972F6A9007868F4 /* MicrophoneViewController.swift in Sources */,
