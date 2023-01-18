@@ -46,6 +46,24 @@ extension StringProtocol {
     }
 }
 
+extension Bundle {
+    var appName: String? {
+        return object(forInfoDictionaryKey: "CFBundleName") as? String
+    }
+    
+    var displayName: String? {
+        return object(forInfoDictionaryKey: "CFBundleDisplayName") as? String
+    }
+    
+    var appVersion: String? {
+        return object(forInfoDictionaryKey: "CFBundleShortVersionString") as? String
+    }
+    
+    var buildNumber: String? {
+        return object(forInfoDictionaryKey: "CFBundleVersion") as? String
+    }
+}
+
 extension UIDevice {
 
     static let modelName: String = {

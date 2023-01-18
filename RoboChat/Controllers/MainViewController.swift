@@ -43,6 +43,7 @@ class MainViewController: UIViewController, UITableViewDataSource, UITableViewDe
     private let errorColor: UIColor = UIColor(named: "errorColor") ?? UIColor(red: 245/255, green: 61/244, blue: 73/255, alpha: 1.0)
     private let activeMicImageView = UIImageView(image: UIImage(named: "microphoneIcon"))
     private let inactiveMicImageView = UIImageView(image: UIImage(named: "microphoneIconInactive"))
+    private let menuIcon = UIImageView(image: UIImage(named: "menuIcon"))
     private let clearIcon = UIImageView(image: UIImage(named: "clearIcon"))
     private let clearIconInactive = UIImageView(image: UIImage(named: "clearIconInactive"))
     
@@ -53,6 +54,17 @@ class MainViewController: UIViewController, UITableViewDataSource, UITableViewDe
         view.layer.frame.size.height = 128
         view.translatesAutoresizingMaskIntoConstraints = false
         return view
+    }()
+    
+    private let menuButton: UIButton = {
+        let button = UIButton()
+        button.frame.size = CGSize(width: 32, height: 32)
+        button.clipsToBounds = true
+        button.setTitle("", for: .normal)
+        button.isUserInteractionEnabled = true
+        button.translatesAutoresizingMaskIntoConstraints = false
+        button.addTarget(self, action: #selector(menuButtonTapped(_:)), for: .touchUpInside)
+        return button
     }()
     
     private let titleLabel: UILabel = {
@@ -172,6 +184,7 @@ class MainViewController: UIViewController, UITableViewDataSource, UITableViewDe
     private func setupViews() {
         view.addSubview(lowerView)
         view.addSubview(chatTableView)
+        view.addSubview(menuButton)
         view.addSubview(clearTextButton)
         view.addSubview(microphoneButton)
         view.addSubview(titleLabel)
@@ -196,7 +209,7 @@ class MainViewController: UIViewController, UITableViewDataSource, UITableViewDe
         speechRecognitionAuth = checkAuthorizations()
         
         textField.becomeFirstResponder()
-        setupClearButton()
+        setupButtons()
     }
     
     private func setupConstraints() {
@@ -225,13 +238,13 @@ class MainViewController: UIViewController, UITableViewDataSource, UITableViewDe
             sendQuestionButton.leadingAnchor.constraint(equalTo: textField.trailingAnchor, constant: 16),
             sendQuestionButton.bottomAnchor.constraint(equalTo: view.keyboardLayoutGuide.topAnchor, constant: -16),
             
-            titleLabel.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 8),
-            titleLabel.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor, constant: 24),
+            titleLabel.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 4),
+            titleLabel.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor, constant: 56),
             titleLabel.heightAnchor.constraint(equalToConstant: 32),
             titleLabel.widthAnchor.constraint(equalToConstant: 220),
             
             subTitleLabel.topAnchor.constraint(equalTo: titleLabel.bottomAnchor, constant: -10),
-            subTitleLabel.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor, constant: 24),
+            subTitleLabel.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor, constant: 56),
             subTitleLabel.heightAnchor.constraint(equalToConstant: 20),
             subTitleLabel.widthAnchor.constraint(equalToConstant: 220),
             
@@ -239,6 +252,11 @@ class MainViewController: UIViewController, UITableViewDataSource, UITableViewDe
             errorLabel.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor, constant: 16),
             errorLabel.heightAnchor.constraint(equalToConstant: 70),
             errorLabel.widthAnchor.constraint(equalToConstant: UIScreen.main.bounds.size.width-116),
+            
+            menuButton.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 10),
+            menuButton.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor, constant: 16),
+            menuButton.heightAnchor.constraint(equalToConstant: 32),
+            menuButton.widthAnchor.constraint(equalToConstant: 32),
             
             clearTextButton.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 10),
             clearTextButton.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: -16),
@@ -258,11 +276,17 @@ class MainViewController: UIViewController, UITableViewDataSource, UITableViewDe
         
     }
     
-    private func setupClearButton() {
-        let imageView = clearIcon
-        imageView.frame = CGRect(x: clearTextButton.layer.frame.minX, y: clearTextButton.layer.frame.minY, width: 32, height: 32)
-        imageView.contentMode = .scaleAspectFit
-        clearTextButton.addSubview(imageView)
+    private func setupButtons() {
+        let buttons: [UIButton] = [menuButton, clearTextButton]
+        let buttonImageViews: [UIImageView] = [menuIcon, clearIcon]
+        var i: Int = 0
+        for button in buttons {
+            let imageView = buttonImageViews[i]
+            imageView.frame = CGRect(x: button.layer.frame.minX, y: button.layer.frame.minY, width: 32, height: 32)
+            imageView.contentMode = .scaleAspectFit
+            button.addSubview(imageView)
+            i = i + 1
+        }
     }
     
     private func setupSendButton(isEnabled: Bool) {
@@ -445,6 +469,13 @@ class MainViewController: UIViewController, UITableViewDataSource, UITableViewDe
         self.present(secondViewController, animated: true, completion: nil)
     }
     
+    func performSegueToMenu() {
+        let secondViewController = settingsMenuViewController()
+        secondViewController.delegate = self
+        secondViewController.modalPresentationStyle = .popover
+        self.present(secondViewController, animated: true, completion: nil)
+    }
+    
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return  models.count ?? 0
     }
@@ -493,6 +524,10 @@ class MainViewController: UIViewController, UITableViewDataSource, UITableViewDe
             self.models.removeAll()
             self.chatTableView.reloadData()
         }
+    }
+    
+    @objc private func menuButtonTapped(_ sender: UIButton) {
+        performSegueToMenu()
     }
     
     @objc private func handleDoubleTap() {
@@ -592,3 +627,6 @@ class MainViewController: UIViewController, UITableViewDataSource, UITableViewDe
     
 }
 
+extension MainViewController: UICollectionViewDelegateFlowLayout {
+    
+}
