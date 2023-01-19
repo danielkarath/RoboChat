@@ -154,7 +154,6 @@ class LanguageManager {
         var returnValue: UIElementLanguages?
         for uiElement in uiElementList {
             if element == uiElement.uiElement {
-                print("YAAAyy")
                 returnValue = uiElement
             }
         }

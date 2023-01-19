@@ -283,6 +283,17 @@ class MicrophoneViewController: UIViewController, AVSpeechSynthesizerDelegate {
         upperLineView.addSubview(viewTitleLabel)
         upperLineView.addSubview(doneButton)
         speechRecognizer = addVoiceRecognier(language: .English)
+        setupAccessibility()
+    }
+    
+    private func setupAccessibility() {
+        viewTitleLabel.accessibilityLabel = LanguageManager.shared.setAccessibilityLabelFor(element: .micTileLabel)
+        InstructionsLabel.accessibilityLabel = LanguageManager.shared.setAccessibilityLabelFor(element: .micInstructionsLabel)
+        backButton.accessibilityLabel = LanguageManager.shared.setAccessibilityLabelFor(element: .backButton)
+        
+        viewTitleLabel.text = LanguageManager.shared.setTitleLabelFor(element: .micTileLabel)
+        InstructionsLabel.text = LanguageManager.shared.setTitleLabelFor(element: .micInstructionsLabel)
+        
     }
     
     private func setupDoubleTapRecognizer(view: UIView) {
@@ -356,7 +367,7 @@ class MicrophoneViewController: UIViewController, AVSpeechSynthesizerDelegate {
         } catch {
             print("ERROR: \(error.localizedDescription)")
         }
-        self.InstructionsLabel.text = "Ask me something"
+        self.InstructionsLabel.text = LanguageManager.shared.setTitleLabelFor(element: .micInstructionLabelWhileRecording)
         self.microphoneImageView.layer.sublayers?.forEach { $0.removeFromSuperlayer() }
     }
      
@@ -433,7 +444,7 @@ class MicrophoneViewController: UIViewController, AVSpeechSynthesizerDelegate {
         self.recognitionRequest = nil
         self.recognitionTask = nil
         isAudioEngineRunning = false
-        InstructionsLabel.text = "Sending question"
+        InstructionsLabel.text = LanguageManager.shared.setTitleLabelFor(element: .micInstructionsLabelAfterRecording)
         audioInputBusCounter = audioInputBusCounter + 1
         animationTimer?.invalidate()
         microphoneImageView.circleAnimation(image: microphoneImageView, borderColor: mainColor, cornerRadious: 70, animationTime: 2.0)

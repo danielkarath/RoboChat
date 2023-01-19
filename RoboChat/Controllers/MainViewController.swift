@@ -16,7 +16,7 @@ enum SelectedLanguage: String {
     case Spanish = "es-ES"
 }
 
-class MainViewController: UIViewController, UITableViewDataSource, UITableViewDelegate, UITextFieldDelegate, AVSpeechSynthesizerDelegate, SFSpeechRecognizerDelegate, MicrophoneViewControllerDelegate {
+class MainViewController: UIViewController, UITableViewDataSource, UITableViewDelegate, UITextFieldDelegate, AVSpeechSynthesizerDelegate, SFSpeechRecognizerDelegate, MicrophoneViewControllerDelegate, SettingsViewControllerDelegate {
     
     private let synthesizer = AVSpeechSynthesizer()
     private var speechRecognizer: SFSpeechRecognizer?
@@ -185,6 +185,10 @@ class MainViewController: UIViewController, UITableViewDataSource, UITableViewDe
         // Do any additional setup after loading the view.
     }
     
+    func didChangeAppLanguage() {
+        setupAccessibility()
+    }
+    
     private func setupViews() {
         let language: String = UserDefaults.standard.object(forKey: "language") as? String ?? "en-US"
         view.addSubview(lowerView)
@@ -294,6 +298,17 @@ class MainViewController: UIViewController, UITableViewDataSource, UITableViewDe
         
         titleLabel.text = LanguageManager.shared.setTitleLabelFor(element: .mainTitleLabel)
         subTitleLabel.text = LanguageManager.shared.setTitleLabelFor(element: .mainSubTitleLabel)
+        textField.placeholder = LanguageManager.shared.setTitleLabelFor(element: .mainTextField)
+        
+        let title: String = LanguageManager.shared.setTitleLabelFor(element: .mainSendButton)
+        let fontColor: UIColor = UIColor(red: 247/255, green: 247/255, blue: 251/255, alpha: 1.0)
+        let range = (title as NSString).range(of: title)
+        var buttonFont: UIFont?
+        buttonFont = UIFont(name: "Avenir Next", size: 15)
+        let attributedText = NSMutableAttributedString(string: title, attributes: [NSMutableAttributedString.Key.font: buttonFont!])
+        attributedText.addAttribute(NSAttributedString.Key.foregroundColor, value: fontColor, range: range)
+        attributedText.addAttribute(NSAttributedString.Key.kern, value: 1.2, range: range)
+        sendQuestionButton.setAttributedTitle(attributedText, for: .normal)
     }
     
     private func setupButtons() {

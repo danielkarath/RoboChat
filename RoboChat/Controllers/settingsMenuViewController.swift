@@ -7,6 +7,10 @@
 
 import UIKit
 
+protocol SettingsViewControllerDelegate {
+    func didChangeAppLanguage()
+}
+
 class settingsMenuViewController: UIViewController {
 
     // MARK: - Color constants
@@ -128,7 +132,102 @@ class settingsMenuViewController: UIViewController {
         return label
     }()
     
-    var delegate: MicrophoneViewControllerDelegate?
+    private let languageLabel: UILabel = {
+        let label = UILabel()
+        label.text = "Language"
+        label.font = UIFont(name: "Avenir Next", size: 15)
+        label.textColor = UIColor(red: 212/255, green: 212/244, blue: 216/255, alpha: 1.0)
+        label.tintColor = UIColor(red: 212/255, green: 212/244, blue: 216/255, alpha: 1.0)
+        label.textAlignment = .left
+        label.contentMode = .top
+        label.numberOfLines = 0
+        label.sizeToFit()
+        label.translatesAutoresizingMaskIntoConstraints = false
+        return label
+    }()
+    
+    private let englishButton: UIButton = {
+        let button = UIButton()
+        let title: String = "English"
+        let mainColor: UIColor = UIColor(named: "mainColor") ?? UIColor(red: 120/255, green: 120/244, blue: 220/255, alpha: 1.0)
+        let fontColor: UIColor = UIColor(red: 247/255, green: 247/255, blue: 251/255, alpha: 1.0)
+        button.translatesAutoresizingMaskIntoConstraints = false
+        let range = (title as NSString).range(of: title)
+        var buttonFont: UIFont?
+        buttonFont = UIFont(name: "Avenir Next", size: 13)
+        let attributedText = NSMutableAttributedString(string: title, attributes: [NSMutableAttributedString.Key.font: buttonFont!])
+        attributedText.addAttribute(NSAttributedString.Key.foregroundColor, value: fontColor, range: range)
+        attributedText.addAttribute(NSAttributedString.Key.kern, value: 1.2, range: range)
+        button.setAttributedTitle(attributedText, for: .normal)
+        button.layer.cornerRadius = 8
+        button.backgroundColor = mainColor
+        return button
+    }()
+    
+    private let frenchButton: UIButton = {
+        let button = UIButton()
+        let title: String = "Français"
+        let mainColor: UIColor = UIColor(named: "mainColor") ?? UIColor(red: 120/255, green: 120/244, blue: 220/255, alpha: 1.0)
+        let fontColor: UIColor = UIColor(red: 247/255, green: 247/255, blue: 251/255, alpha: 1.0)
+        button.translatesAutoresizingMaskIntoConstraints = false
+        let range = (title as NSString).range(of: title)
+        var buttonFont: UIFont?
+        buttonFont = UIFont(name: "Avenir Next", size: 13)
+        let attributedText = NSMutableAttributedString(string: title, attributes: [NSMutableAttributedString.Key.font: buttonFont!])
+        attributedText.addAttribute(NSAttributedString.Key.foregroundColor, value: fontColor, range: range)
+        attributedText.addAttribute(NSAttributedString.Key.kern, value: 1.2, range: range)
+        button.setAttributedTitle(attributedText, for: .normal)
+        button.layer.cornerRadius = 8
+        button.backgroundColor = mainColor
+        return button
+    }()
+    
+    private let spanishButton: UIButton = {
+        let button = UIButton()
+        let title: String = "Español"
+        let mainColor: UIColor = UIColor(named: "mainColor") ?? UIColor(red: 120/255, green: 120/244, blue: 220/255, alpha: 1.0)
+        let fontColor: UIColor = UIColor(red: 247/255, green: 247/255, blue: 251/255, alpha: 1.0)
+        button.translatesAutoresizingMaskIntoConstraints = false
+        let range = (title as NSString).range(of: title)
+        var buttonFont: UIFont?
+        buttonFont = UIFont(name: "Avenir Next", size: 13)
+        let attributedText = NSMutableAttributedString(string: title, attributes: [NSMutableAttributedString.Key.font: buttonFont!])
+        attributedText.addAttribute(NSAttributedString.Key.foregroundColor, value: fontColor, range: range)
+        attributedText.addAttribute(NSAttributedString.Key.kern, value: 1.2, range: range)
+        button.setAttributedTitle(attributedText, for: .normal)
+        button.layer.cornerRadius = 8
+        button.backgroundColor = mainColor
+        return button
+    }()
+    
+    private let swedishButton: UIButton = {
+        let button = UIButton()
+        let title: String = "Svenska"
+        let mainColor: UIColor = UIColor(named: "mainColor") ?? UIColor(red: 120/255, green: 120/244, blue: 220/255, alpha: 1.0)
+        let fontColor: UIColor = UIColor(red: 247/255, green: 247/255, blue: 251/255, alpha: 1.0)
+        button.translatesAutoresizingMaskIntoConstraints = false
+        let range = (title as NSString).range(of: title)
+        var buttonFont: UIFont?
+        buttonFont = UIFont(name: "Avenir Next", size: 13)
+        let attributedText = NSMutableAttributedString(string: title, attributes: [NSMutableAttributedString.Key.font: buttonFont!])
+        attributedText.addAttribute(NSAttributedString.Key.foregroundColor, value: fontColor, range: range)
+        attributedText.addAttribute(NSAttributedString.Key.kern, value: 1.2, range: range)
+        button.setAttributedTitle(attributedText, for: .normal)
+        button.layer.cornerRadius = 8
+        button.backgroundColor = mainColor
+        return button
+    }()
+    
+    private lazy var languageStackView: UIStackView = {
+        let stackView = UIStackView()
+        stackView.translatesAutoresizingMaskIntoConstraints = false
+        stackView.axis = .horizontal
+        stackView.distribution = .fillEqually
+        stackView.spacing = 8
+        return stackView
+    }()
+    
+    var delegate: SettingsViewControllerDelegate?
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -136,7 +235,7 @@ class settingsMenuViewController: UIViewController {
         setupConstraints()
         overrideUserInterfaceStyle = .dark
         backButton.addTarget(self, action: #selector(backButtonTapped(_:)), for: .touchUpInside)
-        
+        setupAccessibility()
     }
 
     private func setupView() {
@@ -146,6 +245,15 @@ class settingsMenuViewController: UIViewController {
         }
         upperLineView.addSubview(backButton)
         upperLineView.addSubview(viewTitleLabel)
+        settingsBackgroundView.addSubview(languageLabel)
+        settingsBackgroundView.addSubview(languageStackView)
+        let languageButtons: [UIButton] = [englishButton, frenchButton, spanishButton, swedishButton]
+        setupLanguageButton(buttons: languageButtons)
+        for button in languageButtons {
+            languageStackView.addArrangedSubview(button)
+            button.addTarget(self, action: #selector(languageButtonTapped(_:)), for: .touchUpInside)
+        }
+        
     }
     
     private func setupConstraints() {
@@ -179,12 +287,94 @@ class settingsMenuViewController: UIViewController {
             developerLabel.centerXAnchor.constraint(equalTo: view.safeAreaLayoutGuide.centerXAnchor, constant: 0),
             developerLabel.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: 4),
             developerLabel.heightAnchor.constraint(equalToConstant: 20),
-            developerLabel.widthAnchor.constraint(equalToConstant: 200)
+            developerLabel.widthAnchor.constraint(equalToConstant: 200),
+            
+            languageLabel.leadingAnchor.constraint(equalTo: settingsBackgroundView.leadingAnchor, constant: 40),
+            languageLabel.topAnchor.constraint(equalTo: settingsBackgroundView.topAnchor, constant: 32),
+            languageLabel.heightAnchor.constraint(equalToConstant: 30),
+            languageLabel.widthAnchor.constraint(equalToConstant: 140),
+            
+            languageStackView.topAnchor.constraint(equalTo: languageLabel.bottomAnchor, constant: 8),
+            languageStackView.leadingAnchor.constraint(equalTo: settingsBackgroundView.leadingAnchor, constant: 32),
+            languageStackView.trailingAnchor.constraint(equalTo: settingsBackgroundView.trailingAnchor, constant: -32),
+            languageStackView.heightAnchor.constraint(equalToConstant: 30)
         ])
+    }
+    
+    private func setupLanguageButton(buttons: [UIButton]) {
+        let language: String = UserDefaults.standard.object(forKey: "language") as? String ?? "en-US"
+        let selectedLanguage = LanguageManager.shared.convertStringToLanguage(selectedLanguage: language)
+        var selectedLanguageButton: Int = 0
+        var backgroundColor: UIColor = simpleBackgroundColor
+        var borderColor: UIColor = textColor
+        var i: Int = 0
+        switch selectedLanguage {
+        case .English:
+            selectedLanguageButton = 0
+        case .French:
+            selectedLanguageButton = 1
+        case .Spanish:
+            selectedLanguageButton = 2
+        case .Swedish:
+            selectedLanguageButton = 3
+        default:
+            selectedLanguageButton = 0
+        }
+        for button in buttons {
+            if i == selectedLanguageButton {
+                backgroundColor = mainColor
+                borderColor = mainColor
+            } else {
+                backgroundColor = simpleBackgroundColor
+                borderColor = textColor
+            }
+            button.layer.cornerRadius = 8
+            button.backgroundColor = backgroundColor
+            button.layer.borderWidth = 1.5
+            button.layer.borderColor = borderColor.cgColor
+            i = i + 1
+        }
+    }
+    
+    private func setupAccessibility() {
+        viewTitleLabel.accessibilityLabel = LanguageManager.shared.setAccessibilityLabelFor(element: .settingsSettingsTitleLabel)
+        languageLabel.accessibilityLabel = LanguageManager.shared.setAccessibilityLabelFor(element: .settingsLanguageLabel)
+        developerLabel.accessibilityLabel = LanguageManager.shared.setAccessibilityLabelFor(element: .settingsDevelopedByLabel)
+        backButton.accessibilityLabel = LanguageManager.shared.setAccessibilityLabelFor(element: .backButton)
+        
+        viewTitleLabel.text = LanguageManager.shared.setTitleLabelFor(element: .settingsSettingsTitleLabel)
+        languageLabel.text = LanguageManager.shared.setTitleLabelFor(element: .settingsLanguageLabel)
+        developerLabel.text = LanguageManager.shared.setTitleLabelFor(element: .settingsDevelopedByLabel)
     }
     
     @objc private func backButtonTapped(_ sender: UIButton) {
         dismiss(animated: true, completion: nil)
+    }
+    
+    @objc private func languageButtonTapped(_ sender: UIButton) {
+        print("Did tap on language button")
+        let languageButtons: [UIButton] = [englishButton, frenchButton, spanishButton, swedishButton]
+        var selectedLanguage: SelectedLanguage = .English
+        switch sender {
+        case englishButton:
+            selectedLanguage = .English
+        case frenchButton:
+            selectedLanguage = .French
+        case spanishButton:
+            selectedLanguage = .Spanish
+        case swedishButton:
+            selectedLanguage = .Swedish
+        default:
+            selectedLanguage = .English
+        }
+        LanguageManager.shared.setLanguage(selectedLanguage: selectedLanguage)
+        DispatchQueue.main.asyncAfter(deadline: .now()+0.15) {
+            let language: String = UserDefaults.standard.object(forKey: "language") as? String ?? "en-US"
+            print("language: \(language)")
+            self.setupLanguageButton(buttons: languageButtons)
+            self.setupAccessibility()
+            self.delegate?.didChangeAppLanguage()
+        }
     }
     
 }
