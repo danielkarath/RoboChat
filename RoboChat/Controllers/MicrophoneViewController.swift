@@ -293,7 +293,7 @@ class MicrophoneViewController: UIViewController, AVSpeechSynthesizerDelegate {
     }
     
     
-    private func addVoiceRecognier(language: VoiceLanguage) -> SFSpeechRecognizer {
+    private func addVoiceRecognier(language: SelectedLanguage) -> SFSpeechRecognizer {
         let speechRecognizer = SFSpeechRecognizer(locale: Locale(identifier: language.rawValue))
         speechRecognizer?.delegate = self
         return speechRecognizer!

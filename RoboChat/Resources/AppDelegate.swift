@@ -13,7 +13,11 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     var restrictRotation:UIInterfaceOrientationMask = .portrait
     
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
+        let RCUserDefaults = RCUserDefaults()
         APIManager.shared.setup()
+        let language: String = UserDefaults.standard.object(forKey: "language") as? String ?? "en-US"
+        //let fr: String = "fr-FR"
+        RCUserDefaults.language(selection: language)
         // Override point for customization after application launch.
         return true
     }

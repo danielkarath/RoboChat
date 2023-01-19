@@ -7,6 +7,9 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		3904E6AE297965B100BB7DDA /* LanguageManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3904E6AD297965B100BB7DDA /* LanguageManager.swift */; };
+		3904E6B02979660300BB7DDA /* RCUserDefaults.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3904E6AF2979660300BB7DDA /* RCUserDefaults.swift */; };
+		3904E6B2297970C800BB7DDA /* UIElementLanguages.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3904E6B1297970C800BB7DDA /* UIElementLanguages.swift */; };
 		39686E262972F6A9007868F4 /* MicrophoneViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 39686E252972F6A9007868F4 /* MicrophoneViewController.swift */; };
 		39C52F6D296C30B700D91F12 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 39C52F6C296C30B700D91F12 /* AppDelegate.swift */; };
 		39C52F6F296C30B700D91F12 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 39C52F6E296C30B700D91F12 /* SceneDelegate.swift */; };
@@ -22,6 +25,9 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		3904E6AD297965B100BB7DDA /* LanguageManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LanguageManager.swift; sourceTree = "<group>"; };
+		3904E6AF2979660300BB7DDA /* RCUserDefaults.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RCUserDefaults.swift; sourceTree = "<group>"; };
+		3904E6B1297970C800BB7DDA /* UIElementLanguages.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UIElementLanguages.swift; sourceTree = "<group>"; };
 		39686E252972F6A9007868F4 /* MicrophoneViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MicrophoneViewController.swift; sourceTree = "<group>"; };
 		39C52F69296C30B700D91F12 /* RoboChat.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = RoboChat.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		39C52F6C296C30B700D91F12 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
@@ -54,6 +60,8 @@
 			children = (
 				39C52F83296C326200D91F12 /* APIManager.swift */,
 				39E52FDD2975977900C7EE6D /* SizeManager.swift */,
+				3904E6AD297965B100BB7DDA /* LanguageManager.swift */,
+				39C52F87296C9B5900D91F12 /* HapticsManager.swift */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -74,7 +82,8 @@
 				39C52F6C296C30B700D91F12 /* AppDelegate.swift */,
 				39C52F6E296C30B700D91F12 /* SceneDelegate.swift */,
 				39C52F85296C90D700D91F12 /* extensions.swift */,
-				39C52F87296C9B5900D91F12 /* HapticsManager.swift */,
+				3904E6AF2979660300BB7DDA /* RCUserDefaults.swift */,
+				3904E6B1297970C800BB7DDA /* UIElementLanguages.swift */,
 				39C52F77296C30B700D91F12 /* LaunchScreen.storyboard */,
 				39C52F75296C30B700D91F12 /* Assets.xcassets */,
 			);
@@ -187,12 +196,15 @@
 				39FD790129786B6100C99B48 /* settingsMenuViewController.swift in Sources */,
 				39C52F88296C9B5900D91F12 /* HapticsManager.swift in Sources */,
 				39C52F86296C90D700D91F12 /* extensions.swift in Sources */,
+				3904E6B02979660300BB7DDA /* RCUserDefaults.swift in Sources */,
 				39E52FDE2975977900C7EE6D /* SizeManager.swift in Sources */,
 				39C52F84296C326200D91F12 /* APIManager.swift in Sources */,
+				3904E6B2297970C800BB7DDA /* UIElementLanguages.swift in Sources */,
 				39C52F71296C30B700D91F12 /* MainViewController.swift in Sources */,
 				39686E262972F6A9007868F4 /* MicrophoneViewController.swift in Sources */,
 				39C52F6D296C30B700D91F12 /* AppDelegate.swift in Sources */,
 				39C52F6F296C30B700D91F12 /* SceneDelegate.swift in Sources */,
+				3904E6AE297965B100BB7DDA /* LanguageManager.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

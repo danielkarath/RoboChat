@@ -9,7 +9,7 @@ import UIKit
 import AVFoundation
 import Speech
 
-enum VoiceLanguage: String {
+enum SelectedLanguage: String {
     case English = "en-US"
     case Swedish = "sv-SE"
     case French = "fr-FR"
@@ -33,6 +33,8 @@ class MainViewController: UIViewController, UITableViewDataSource, UITableViewDe
     private var questionAllowed: Bool = true
     private var audioInputBusCounter: Int = 0
     private var isAudioEngineRunning: Bool = false
+    
+    //private let languageManager = LanguageManager()
     
     // MARK: - Color constants
     private let textColor: UIColor = UIColor(named: "textColor") ?? UIColor(red: 212/255, green: 212/244, blue: 216/255, alpha: 1.0)
@@ -64,13 +66,15 @@ class MainViewController: UIViewController, UITableViewDataSource, UITableViewDe
         button.isUserInteractionEnabled = true
         button.translatesAutoresizingMaskIntoConstraints = false
         button.addTarget(self, action: #selector(menuButtonTapped(_:)), for: .touchUpInside)
+        button.isAccessibilityElement = true
+        button.accessibilityLabel = "Settings menu"
         return button
     }()
     
     private let titleLabel: UILabel = {
         let label = UILabel()
         label.text = "Ask me something"
-        label.font = UIFont(name: "Avenir Next Demi Bold", size: 18)
+        label.font = UIFont(name: "Avenir Next Demi Bold", size: 15)
         label.textAlignment = .left
         label.numberOfLines = 0
         label.sizeToFit()
@@ -150,7 +154,7 @@ class MainViewController: UIViewController, UITableViewDataSource, UITableViewDe
     
     private let sendQuestionButton: UIButton = {
         let button = UIButton()
-        let title: String = "send"
+        let title: String = LanguageManager.shared.setTitleLabelFor(element: .mainSendButton)
         let mainColor: UIColor = UIColor(named: "mainColor") ?? UIColor(red: 120/255, green: 120/244, blue: 220/255, alpha: 1.0)
         let fontColor: UIColor = UIColor(red: 247/255, green: 247/255, blue: 251/255, alpha: 1.0)
         button.translatesAutoresizingMaskIntoConstraints = false
@@ -182,6 +186,7 @@ class MainViewController: UIViewController, UITableViewDataSource, UITableViewDe
     }
     
     private func setupViews() {
+        let language: String = UserDefaults.standard.object(forKey: "language") as? String ?? "en-US"
         view.addSubview(lowerView)
         view.addSubview(chatTableView)
         view.addSubview(menuButton)
@@ -210,6 +215,8 @@ class MainViewController: UIViewController, UITableViewDataSource, UITableViewDe
         
         textField.becomeFirstResponder()
         setupButtons()
+        setupAccessibility()
+        print("Current language is: \(language)")
     }
     
     private func setupConstraints() {
@@ -276,6 +283,19 @@ class MainViewController: UIViewController, UITableViewDataSource, UITableViewDe
         
     }
     
+    private func setupAccessibility() {
+        menuButton.accessibilityLabel = LanguageManager.shared.setAccessibilityLabelFor(element: .mainSettingsButton)
+        titleLabel.accessibilityLabel = LanguageManager.shared.setAccessibilityLabelFor(element: .mainTitleLabel)
+        subTitleLabel.accessibilityLabel = LanguageManager.shared.setAccessibilityLabelFor(element: .mainSubTitleLabel)
+        clearTextButton.accessibilityLabel = LanguageManager.shared.setAccessibilityLabelFor(element: .mainclearButton)
+        microphoneButton.accessibilityLabel = LanguageManager.shared.setAccessibilityLabelFor(element: .mainMicrophoneButton)
+        textField.accessibilityLabel = LanguageManager.shared.setAccessibilityLabelFor(element: .mainTextField)
+        sendQuestionButton.accessibilityLabel = LanguageManager.shared.setAccessibilityLabelFor(element: .mainSendButton)
+        
+        titleLabel.text = LanguageManager.shared.setTitleLabelFor(element: .mainTitleLabel)
+        subTitleLabel.text = LanguageManager.shared.setTitleLabelFor(element: .mainSubTitleLabel)
+    }
+    
     private func setupButtons() {
         let buttons: [UIButton] = [menuButton, clearTextButton]
         let buttonImageViews: [UIImageView] = [menuIcon, clearIcon]
@@ -320,6 +340,8 @@ class MainViewController: UIViewController, UITableViewDataSource, UITableViewDe
     }
     
     private func sendQuestion(textField: UITextField) {
+        let language: String = UserDefaults.standard.object(forKey: "language") as? String ?? "en-US"
+        let selectedLanguage = LanguageManager.shared.convertStringToLanguage(selectedLanguage: language)
         if questionAllowed {
             setupSendButton(isEnabled: questionAllowed)
             if let text = textField.text, !text.isEmpty, !text.trimmingCharacters(in: .whitespaces).isEmpty {
@@ -340,7 +362,7 @@ class MainViewController: UIViewController, UITableViewDataSource, UITableViewDe
                             }catch{
                                 print(error)
                             }
-                            self?.say(synthesizer: self!.synthesizer, phrase: modifiedOutput, onlyIfVoiceOverOn: false, isPriority: true)
+                            self?.say(synthesizer: self!.synthesizer, phrase: modifiedOutput, onlyIfVoiceOverOn: false, isPriority: true, language: selectedLanguage)
                         }
                     case .failure:
                         print("ERROR: Failed to get response from APIManager.")
@@ -565,7 +587,7 @@ class MainViewController: UIViewController, UITableViewDataSource, UITableViewDe
         sendQuestion(textField: textField)
     }
     
-    public func say(synthesizer: AVSpeechSynthesizer, phrase: String, onlyIfVoiceOverOn: Bool = true, isPriority: Bool, language: VoiceLanguage = .English, rate: Float = AVSpeechUtteranceDefaultSpeechRate, volume: Float = 1.0) {
+    public func say(synthesizer: AVSpeechSynthesizer, phrase: String, onlyIfVoiceOverOn: Bool = true, isPriority: Bool, language: SelectedLanguage, rate: Float = AVSpeechUtteranceDefaultSpeechRate, volume: Float = 1.0) {
         guard AVSpeechSynthesisVoice(language: language.rawValue) != nil else { return }
         let voice: AVSpeechSynthesisVoice = AVSpeechSynthesisVoice(language: language.rawValue) ?? AVSpeechSynthesisVoice(language: "en-US")!
         if onlyIfVoiceOverOn {
