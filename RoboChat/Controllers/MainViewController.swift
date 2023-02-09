@@ -374,12 +374,8 @@ class MainViewController: UIViewController, UITableViewDataSource, UITableViewDe
         var imageView = UIImageView(image: UIImage(named: "aiIcon"))
         var label = UILabel()
         
-        //cell.backgroundColor = simpleBackgroundColor
-        if indexPath.row % 2 == 0 {
-            cell.backgroundColor = .red //simpleBackgroundColor //.red
-        } else {
-            cell.backgroundColor = .orange //simpleBackgroundColor //.red
-        }
+        cell.backgroundColor = simpleBackgroundColor
+        
         
         label.textAlignment = .left
         label.setContentHuggingPriority(.required, for: .vertical)
