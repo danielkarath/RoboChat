@@ -12,7 +12,7 @@ final class APIManager {
     static let shared = APIManager()
     
     @frozen enum Constants {
-        static let secretKey: String = "add OpenAI Secret Ket Here" //Add OpenAI API secret key here
+        static let secretKey: String = add OpenAI Secret Ket Here
         
         
     }
@@ -26,7 +26,7 @@ final class APIManager {
     }
     
     public func getResponse(input: String, completion: @escaping (Result<String, Error>) -> Void) {
-        client?.sendCompletion(with: input, completionHandler: { result in
+        client?.sendCompletion(with: input, maxTokens: 1000, completionHandler: { result in
             switch result {
             case .success(let model):
                 print("Successfully generated response")
@@ -40,5 +40,4 @@ final class APIManager {
             }
         })
     }
-    
 }

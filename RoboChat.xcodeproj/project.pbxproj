@@ -11,6 +11,8 @@
 		3904E6B02979660300BB7DDA /* RCUserDefaults.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3904E6AF2979660300BB7DDA /* RCUserDefaults.swift */; };
 		3904E6B2297970C800BB7DDA /* UIElementLanguages.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3904E6B1297970C800BB7DDA /* UIElementLanguages.swift */; };
 		39686E262972F6A9007868F4 /* MicrophoneViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 39686E252972F6A9007868F4 /* MicrophoneViewController.swift */; };
+		398D2FC6299590CE00912204 /* RCSpeechManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 398D2FC5299590CE00912204 /* RCSpeechManager.swift */; };
+		39A1A52A29959A17001F919D /* RCResponseManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 39A1A52929959A17001F919D /* RCResponseManager.swift */; };
 		39C52F6D296C30B700D91F12 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 39C52F6C296C30B700D91F12 /* AppDelegate.swift */; };
 		39C52F6F296C30B700D91F12 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 39C52F6E296C30B700D91F12 /* SceneDelegate.swift */; };
 		39C52F71296C30B700D91F12 /* MainViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 39C52F70296C30B700D91F12 /* MainViewController.swift */; };
@@ -29,6 +31,8 @@
 		3904E6AF2979660300BB7DDA /* RCUserDefaults.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RCUserDefaults.swift; sourceTree = "<group>"; };
 		3904E6B1297970C800BB7DDA /* UIElementLanguages.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UIElementLanguages.swift; sourceTree = "<group>"; };
 		39686E252972F6A9007868F4 /* MicrophoneViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MicrophoneViewController.swift; sourceTree = "<group>"; };
+		398D2FC5299590CE00912204 /* RCSpeechManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RCSpeechManager.swift; sourceTree = "<group>"; };
+		39A1A52929959A17001F919D /* RCResponseManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RCResponseManager.swift; sourceTree = "<group>"; };
 		39C52F69296C30B700D91F12 /* RoboChat.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = RoboChat.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		39C52F6C296C30B700D91F12 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		39C52F6E296C30B700D91F12 /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
@@ -59,9 +63,11 @@
 			isa = PBXGroup;
 			children = (
 				39C52F83296C326200D91F12 /* APIManager.swift */,
+				39A1A52929959A17001F919D /* RCResponseManager.swift */,
 				39E52FDD2975977900C7EE6D /* SizeManager.swift */,
 				3904E6AD297965B100BB7DDA /* LanguageManager.swift */,
 				39C52F87296C9B5900D91F12 /* HapticsManager.swift */,
+				398D2FC5299590CE00912204 /* RCSpeechManager.swift */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -90,6 +96,13 @@
 			path = Resources;
 			sourceTree = "<group>";
 		};
+		398D2FC7299592DB00912204 /* ViewModel */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = ViewModel;
+			sourceTree = "<group>";
+		};
 		39C52F60296C30B700D91F12 = {
 			isa = PBXGroup;
 			children = (
@@ -110,8 +123,9 @@
 			isa = PBXGroup;
 			children = (
 				39686E242972F66B007868F4 /* Resources */,
-				39686E232972F64B007868F4 /* Controllers */,
 				39686E222972F62A007868F4 /* Models */,
+				39686E232972F64B007868F4 /* Controllers */,
+				398D2FC7299592DB00912204 /* ViewModel */,
 				39C52F7A296C30B700D91F12 /* Info.plist */,
 			);
 			path = RoboChat;
@@ -201,8 +215,10 @@
 				39C52F84296C326200D91F12 /* APIManager.swift in Sources */,
 				3904E6B2297970C800BB7DDA /* UIElementLanguages.swift in Sources */,
 				39C52F71296C30B700D91F12 /* MainViewController.swift in Sources */,
+				398D2FC6299590CE00912204 /* RCSpeechManager.swift in Sources */,
 				39686E262972F6A9007868F4 /* MicrophoneViewController.swift in Sources */,
 				39C52F6D296C30B700D91F12 /* AppDelegate.swift in Sources */,
+				39A1A52A29959A17001F919D /* RCResponseManager.swift in Sources */,
 				39C52F6F296C30B700D91F12 /* SceneDelegate.swift in Sources */,
 				3904E6AE297965B100BB7DDA /* LanguageManager.swift in Sources */,
 			);

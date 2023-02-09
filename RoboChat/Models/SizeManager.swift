@@ -45,7 +45,7 @@ final class SizeManager {
             returnGroup = DeviceGroup.iPad28cm
         default:
             if UIScreen.main.bounds.height < 2600 {
-                print("jajjj")
+                print(" ")
             }
         }
         
