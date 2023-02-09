@@ -374,7 +374,7 @@ class MainViewController: UIViewController, UITableViewDataSource, UITableViewDe
         var imageView = UIImageView(image: UIImage(named: "aiIcon"))
         var label = UILabel()
         
-        cell.backgroundColor = simpleBackgroundColor
+        cell.backgroundColor = .simpleBackgroundColor
         
         
         label.textAlignment = .left
