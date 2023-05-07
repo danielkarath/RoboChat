@@ -11,7 +11,7 @@ I built this chat app around the time ChatGPT became popular. I built this proje
 I tried to focus a lot on accessibility here thus the app utilizes AVFoundation and Speech to enable the user to use their speech to initiate requests to ChatGPT. The app uses the OpenAI ChatGPT API, and heavily relies on Adam Rush's OpenAI Swift wrapper library, which you can check out here: [**OpenAISwift**](https://github.com/danielkarath/RoboChat) (https://github.com/adamrushy/OpenAISwift).  
 
 <p align="center">
-  <img width="200" alt="RoboChatMockup1" src="https://user-images.githubusercontent.com/26801446/236675888-715cc1f0-8242-429a-9a32-0f4050c206dd.png />
+  <img width="200" alt="RoboChatMockup1" src="https://user-images.githubusercontent.com/26801446/236675888-715cc1f0-8242-429a-9a32-0f4050c206dd.png" />
   <img width="200" alt="RoboChatMockup2" src="https://user-images.githubusercontent.com/26801446/236675889-506c3c88-80ba-44c8-b713-de40df427af5.png" />
 </p>
 
